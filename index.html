@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PJK Quiz App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-theme="main">
+  <div class="app-shell">
+    <header class="app-header">
+      <p class="eyebrow">Study mode</p>
+      <h1>PJK Quiz App</h1>
+      <p class="subtitle">Choose a section from the main menu and jump into a dedicated experience.</p>
+
+      <div class="top-actions">
+        <button class="ghost-btn" id="themeMenuButton">Theme Menu</button>
+        <button class="ghost-btn" id="backButton">Back to Main Menu</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="menuScreen" class="screen active">
+        <div class="menu-grid">
+          <button class="menu-card" data-screen="flashcards">
+            <h2>Flashcards</h2>
+            <p>Flip through drink facts and reveal the answer.</p>
+          </button>
+          <button class="menu-card" data-screen="quiz">
+            <h2>Quiz</h2>
+            <p>Practice multiple choice and pick-all questions.</p>
+          </button>
+          <button class="menu-card" data-screen="review">
+            <h2>Review</h2>
+            <p>See the notes and prompts you have been working through.</p>
+          </button>
+          <button class="menu-card" data-screen="themes">
+            <h2>Themes</h2>
+            <p>Open the separate theme menu and shuffle your look.</p>
+          </button>
+        </div>
+      </section>
+
+      <section id="flashcardsScreen" class="screen">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Section</p>
+            <h2>Flashcards</h2>
+          </div>
+          <button class="ghost-btn" data-screen="menu">Back</button>
+        </div>
+
+        <div class="card" id="flashcard">
+          <div class="card-face card-front">
+            <p id="flashcardPrompt">Loading prompt...</p>
+          </div>
+          <div class="card-face card-back">
+            <p id="flashcardAnswer">Loading answer...</p>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="flipCard">Flip card</button>
+          <button id="nextCard">Next</button>
+        </div>
+      </section>
+
+      <section id="quizScreen" class="screen">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Section</p>
+            <h2>Quiz</h2>
+          </div>
+          <button class="ghost-btn" data-screen="menu">Back</button>
+        </div>
+
+        <div class="quiz-card">
+          <h3>Multiple choice</h3>
+          <p id="multipleChoicePrompt">Loading question...</p>
+          <div id="multipleChoiceOptions" class="option-list"></div>
+          <button id="submitMultipleChoice">Check answer</button>
+          <p id="multipleChoiceFeedback" class="feedback"></p>
+        </div>
+
+        <div class="quiz-card">
+          <h3>Pick all that apply</h3>
+          <p id="pickAllPrompt">Loading question...</p>
+          <div id="pickAllOptions" class="option-list"></div>
+          <button id="submitPickAll">Check answer</button>
+          <p id="pickAllFeedback" class="feedback"></p>
+        </div>
+      </section>
+
+      <section id="reviewScreen" class="screen">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Section</p>
+            <h2>Review</h2>
+          </div>
+          <button class="ghost-btn" data-screen="menu">Back</button>
+        </div>
+        <ul id="reviewList" class="review-list"></ul>
+      </section>
+
+      <section id="themesScreen" class="screen">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Section</p>
+            <h2>Theme Menu</h2>
+          </div>
+          <button class="ghost-btn" data-screen="menu">Back</button>
+        </div>
+
+        <div class="theme-switcher" aria-label="Theme selector">
+          <button class="theme-btn active" data-theme="main">Main Theme</button>
+          <button class="theme-btn" data-theme="light">Light Mode</button>
+          <button class="theme-btn" data-theme="dark">Dark Mode</button>
+          <button class="theme-btn" data-theme="cyber">Cyber Punk</button>
+          <button class="theme-btn shuffle" id="shuffleTheme">Shuffle Theme</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
