@@ -423,6 +423,61 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
   opacity: 0.85;
 }
 
+.answer-key {
+  margin-top: 16px;
+  margin-left: -24px;
+  margin-right: -24px;
+  margin-bottom: -24px;
+  padding: 10px 24px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: flex-start;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 18px 18px;
+}
+
+.answer-key p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-color);
+  opacity: 0.88;
+}
+
+.answer-key-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.answer-key-dot.key-correct {
+  background: #2ecc71;
+}
+
+.answer-key-dot.key-incorrect {
+  background: #ff5b5b;
+}
+
+.answer-key-dot.key-missed {
+  background: #f1c40f;
+}
+
+@media (max-width: 480px) {
+  .answer-key {
+    margin-left: -18px;
+    margin-right: -18px;
+    margin-bottom: -18px;
+    padding: 10px 18px 12px;
+    gap: 10px;
+  }
+}
+
 .modal {
   display: none;
   position: fixed;

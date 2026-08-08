@@ -105,6 +105,27 @@ function bindEvents() {
 
     if (button.dataset.action === 'next') {
       const mode = state.modes.find((entry) => entry.id === modeId);
+      const card = mode && Array.isArray(mode.items) ? mode.items[modeState.index] : null;
+
+      if (!modeState.revealed && card) {
+        if (isMultipleChoiceCard(card)) {
+          const expected = getCorrectAnswers(card);
+          const submitted = Array.isArray(modeState.selectedOptions) ? modeState.selectedOptions : [];
+          modeState.revealed = true;
+          modeState.answerCorrect = isSelectionCorrect(submitted, expected);
+        } else {
+          const expected = String(card?.answer || '').trim().toLowerCase();
+          const submitted = String(modeState.inputValue || '').trim().toLowerCase();
+          modeState.revealed = true;
+          modeState.answerCorrect = submitted === expected;
+        }
+
+        modeState.revealOnly = false;
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
       const itemCount = mode && Array.isArray(mode.items) ? mode.items.length : 0;
       modeState.index = Math.min(Math.max(itemCount - 1, 0), modeState.index + 1);
       modeState.revealed = false;
@@ -458,6 +479,11 @@ function renderFlashcards(mode) {
           <button class="${revealBtnClass}" type="button" data-action="reveal"${revealBtnDisabled}>${modeState.revealOnly ? 'Answers Revealed' : 'Show Answers'}</button>
         </div>
         ${feedbackMarkup}
+        <div class="answer-key" aria-label="Answer color key">
+          <p><span class="answer-key-dot key-correct"></span> Green: Picked correct</p>
+          <p><span class="answer-key-dot key-incorrect"></span> Red: Picked incorrect</p>
+          <p><span class="answer-key-dot key-missed"></span> Yellow: Missed correct</p>
+        </div>
       `
     : `
         <div class="single-answer-block">
