@@ -19,8 +19,21 @@ function createModeState() {
     inputValue: '',
     answerCorrect: null,
     answerOrder: [],
-    revealOnly: false
+    revealOnly: false,
+    cardOrder: [],
+    focusDrink: '',
+    showDrinkPicker: false
   };
+}
+
+function resetCardProgress(modeState) {
+  modeState.index = 0;
+  modeState.revealed = false;
+  modeState.selectedOptions = [];
+  modeState.inputValue = '';
+  modeState.answerCorrect = null;
+  modeState.answerOrder = [];
+  modeState.revealOnly = false;
 }
 
 function resetModeState(modeId) {
@@ -90,6 +103,40 @@ function bindEvents() {
     const modeId = state.currentView;
     const modeState = state.flashcards[modeId] || createModeState();
 
+    if (button.dataset.action === 'toggle-drink-picker') {
+      modeState.showDrinkPicker = !modeState.showDrinkPicker;
+      state.flashcards[modeId] = modeState;
+      renderView();
+      return;
+    }
+
+    if (button.dataset.action === 'close-drink-picker') {
+      modeState.showDrinkPicker = false;
+      state.flashcards[modeId] = modeState;
+      renderView();
+      return;
+    }
+
+    if (button.dataset.action === 'clear-drink-focus') {
+      modeState.focusDrink = '';
+      modeState.showDrinkPicker = false;
+      modeState.cardOrder = [];
+      resetCardProgress(modeState);
+      state.flashcards[modeId] = modeState;
+      renderView();
+      return;
+    }
+
+    if (button.dataset.action === 'set-drink-focus') {
+      modeState.focusDrink = String(button.dataset.drink || '').trim();
+      modeState.showDrinkPicker = false;
+      modeState.cardOrder = [];
+      resetCardProgress(modeState);
+      state.flashcards[modeId] = modeState;
+      renderView();
+      return;
+    }
+
     if (button.dataset.action === 'prev') {
       modeState.index = Math.max(0, modeState.index - 1);
       modeState.revealed = false;
@@ -105,7 +152,9 @@ function bindEvents() {
 
     if (button.dataset.action === 'next') {
       const mode = state.modes.find((entry) => entry.id === modeId);
-      const card = mode && Array.isArray(mode.items) ? mode.items[modeState.index] : null;
+      const cardOrder = mode ? getOrBuildCardOrder(mode, modeState) : [];
+      const cardIndex = cardOrder[modeState.index] ?? modeState.index;
+      const card = mode && Array.isArray(mode.items) ? mode.items[cardIndex] : null;
 
       if (!modeState.revealed && card) {
         if (isMultipleChoiceCard(card)) {
@@ -126,7 +175,7 @@ function bindEvents() {
         return;
       }
 
-      const itemCount = mode && Array.isArray(mode.items) ? mode.items.length : 0;
+      const itemCount = cardOrder.length;
       modeState.index = Math.min(Math.max(itemCount - 1, 0), modeState.index + 1);
       modeState.revealed = false;
       modeState.selectedOptions = [];
@@ -141,7 +190,9 @@ function bindEvents() {
 
     if (button.dataset.action === 'check') {
       const mode = state.modes.find((entry) => entry.id === modeId);
-      const card = mode && Array.isArray(mode.items) ? mode.items[modeState.index] : null;
+      const cardOrder = mode ? getOrBuildCardOrder(mode, modeState) : [];
+      const cardIndex = cardOrder[modeState.index] ?? modeState.index;
+      const card = mode && Array.isArray(mode.items) ? mode.items[cardIndex] : null;
       if (isMultipleChoiceCard(card)) {
         const expected = getCorrectAnswers(card);
         const submitted = Array.isArray(modeState.selectedOptions) ? modeState.selectedOptions : [];
@@ -198,6 +249,16 @@ function bindEvents() {
     modeState.revealed = false;
     modeState.answerCorrect = null;
     state.flashcards[modeId] = modeState;
+  });
+
+  mainContainer.addEventListener('click', (event) => {
+    if (!event.target.classList.contains('flashcard-drink-modal')) return;
+
+    const modeId = state.currentView;
+    const modeState = state.flashcards[modeId] || createModeState();
+    modeState.showDrinkPicker = false;
+    state.flashcards[modeId] = modeState;
+    renderView();
   });
 }
 
@@ -410,7 +471,20 @@ function renderFlashcards(mode) {
   const modeState = state.flashcards[mode.id] || createModeState();
   state.flashcards[mode.id] = modeState;
 
-  const card = mode.items[modeState.index] || mode.items[0];
+  const drinkGroups = getDrinkCardGroups(mode.items);
+  const drinkNames = drinkGroups
+    .map((group) => group.drinkName)
+    .filter((name) => typeof name === 'string' && name.trim());
+  const hasDrinkPicker = drinkNames.length > 0;
+
+  const cardOrder = getOrBuildCardOrder(mode, modeState);
+  const itemCount = cardOrder.length;
+  if (modeState.index > Math.max(itemCount - 1, 0)) {
+    modeState.index = Math.max(itemCount - 1, 0);
+  }
+
+  const cardIndex = cardOrder[modeState.index] ?? modeState.index;
+  const card = mode.items[cardIndex] || mode.items[0];
   if (!card) {
     mainContainer.innerHTML = `
       <section class="quiz-view">
@@ -498,21 +572,46 @@ function renderFlashcards(mode) {
         </div>
       `;
 
+  const nextButtonLabel = modeState.revealed ? 'Next' : 'Check';
+  const drinkPickerButtonLabel = modeState.focusDrink ? `Drink: ${modeState.focusDrink}` : 'Choose Drink';
+
+  const drinkPickerModalMarkup = hasDrinkPicker
+    ? `
+        <div class="modal flashcard-drink-modal${modeState.showDrinkPicker ? ' active' : ''}" aria-hidden="${modeState.showDrinkPicker ? 'false' : 'true'}">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 class="drink-picker-title">Choose Drink Focus</h2>
+              <button class="close-btn" type="button" data-action="close-drink-picker">&times;</button>
+            </div>
+            <div class="modal-body">
+              <p class="option-label">Start with one drink first</p>
+              <div class="menu-options">
+                <button class="quiz-btn" type="button" data-action="clear-drink-focus">All Drinks</button>
+                ${drinkNames.map((drinkName) => `<button class="quiz-btn" type="button" data-action="set-drink-focus" data-drink="${escapeAttribute(drinkName)}">${escapeHtml(drinkName)}</button>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    : '';
+
   mainContainer.innerHTML = `
     <section class="quiz-view">
       <div class="quiz-header">
         <button class="back-btn" type="button" data-action="back">Back</button>
         <h2>${escapeHtml(mode.label)}</h2>
+        ${hasDrinkPicker ? `<button class="action-btn drink-picker-btn" type="button" data-action="toggle-drink-picker">${escapeHtml(drinkPickerButtonLabel)}</button>` : ''}
       </div>
       <div class="quiz-card">
-        <p class="quiz-counter">${modeState.index + 1} / ${mode.items.length}</p>
+        <p class="quiz-counter">${modeState.index + 1} / ${itemCount}</p>
         <h3>${escapeHtml(card.question || 'Untitled question')}</h3>
         ${answerBody}
       </div>
       <div class="quiz-actions">
         <button class="action-btn" type="button" data-action="prev">Previous</button>
-        <button class="action-btn" type="button" data-action="next">Next</button>
+        <button class="action-btn" type="button" data-action="next">${nextButtonLabel}</button>
       </div>
+      ${drinkPickerModalMarkup}
     </section>
   `;
   updateActiveModeButtons();
@@ -567,6 +666,77 @@ function buildFeedbackText(card, selectedOptions) {
   }
 
   return `Not quite — the correct answer${correctAnswers.length > 1 ? 's are' : ' is'} ${correctAnswers.join(', ')}.`;
+}
+
+function getOrBuildCardOrder(mode, modeState) {
+  const itemCount = Array.isArray(mode?.items) ? mode.items.length : 0;
+  if (!itemCount) {
+    modeState.cardOrder = [];
+    return modeState.cardOrder;
+  }
+
+  const hasValidOrder = Array.isArray(modeState.cardOrder)
+    && modeState.cardOrder.length === itemCount
+    && new Set(modeState.cardOrder).size === itemCount
+    && modeState.cardOrder.every((index) => Number.isInteger(index) && index >= 0 && index < itemCount);
+
+  if (!hasValidOrder) {
+    modeState.cardOrder = buildDrinkGroupedCardOrder(mode.items, modeState.focusDrink);
+  }
+
+  return modeState.cardOrder;
+}
+
+function buildDrinkGroupedCardOrder(items, focusDrink = '') {
+  const groups = getDrinkCardGroups(items);
+  const normalizedFocus = String(focusDrink || '').trim();
+
+  if (!normalizedFocus) {
+    return shuffleArray(groups).flatMap((group) => group.indices);
+  }
+
+  const focused = groups.find((group) => group.drinkName === normalizedFocus);
+  if (!focused) {
+    return shuffleArray(groups).flatMap((group) => group.indices);
+  }
+
+  const remainingGroups = groups.filter((group) => group !== focused);
+  return [focused, ...shuffleArray(remainingGroups)].flatMap((group) => group.indices);
+}
+
+function getDrinkCardGroups(items) {
+  const ingredientPromptPattern = /^Which ingredients come in (.+)\? \(Select all that apply\)$/;
+  const amountPromptPattern = /^How much .+ goes in (.+)\?$/;
+  const garnishPromptPattern = /^Which garnishes go on (.+)\? \(Select all that apply\)$/;
+
+  const groups = [];
+  let activeDrink = '';
+
+  items.forEach((item, index) => {
+    const question = String(item?.question || '');
+    const ingredientMatch = question.match(ingredientPromptPattern);
+
+    if (ingredientMatch) {
+      activeDrink = ingredientMatch[1].trim();
+      groups.push({ drinkName: activeDrink, indices: [index] });
+      return;
+    }
+
+    const amountMatch = question.match(amountPromptPattern);
+    const garnishMatch = question.match(garnishPromptPattern);
+    const matchedDrink = amountMatch ? amountMatch[1].trim() : (garnishMatch ? garnishMatch[1].trim() : '');
+    const belongsToActiveDrink = Boolean(matchedDrink && groups.length && activeDrink && matchedDrink === activeDrink);
+
+    if (belongsToActiveDrink) {
+      groups[groups.length - 1].indices.push(index);
+      return;
+    }
+
+    activeDrink = '';
+    groups.push({ drinkName: '', indices: [index] });
+  });
+
+  return groups;
 }
 
 function shuffleArray(items) {

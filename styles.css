@@ -253,6 +253,13 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
   gap: 12px;
 }
 
+.drink-picker-btn {
+  max-width: 190px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .back-btn,
 .action-btn {
   padding: 10px 14px;
@@ -634,6 +641,29 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
   color: var(--text-color);
   font-size: 1.8rem;
   margin: 0;
+}
+
+.drink-picker-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-transform: none;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+html[data-theme="original"] .drink-picker-title {
+  color: #f6f2e8;
+}
+
+html[data-theme="original"] .flashcard-drink-modal .modal-header .drink-picker-title {
+  color: #f6f2e8;
+}
+
+html[data-theme="light"] .drink-picker-title {
+  color: #1f1f1f;
 }
 
 .close-btn {

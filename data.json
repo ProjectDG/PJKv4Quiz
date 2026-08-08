@@ -29,6 +29,86 @@
       },
       {
         "type": "multiple-choice",
+        "question": "How much Rivi Gin goes in Call Me 'Koko'?",
+        "answers": [
+          "1.5 oz",
+          "2 oz",
+          "1 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1.5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Cincoro Reposado goes in Call Me 'Koko'?",
+        "answers": [
+          ".5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Lychee Syrup goes in Call Me 'Koko'?",
+        "answers": [
+          ".5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Lemon Juice goes in Call Me 'Koko'?",
+        "answers": [
+          ".75 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".75 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Pomegranate Juice goes in Call Me 'Koko'?",
+        "answers": [
+          ".75 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".75 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which garnishes go on Call Me 'Koko'? (Select all that apply)",
+        "answers": [
+          "Dehydrated Lemon & Basil Sprig",
+          "Cherry",
+          "Orange Twist",
+          "1 to 3 Olives",
+          "Olive",
+          "Chili"
+        ],
+        "correct-answers": [
+          "Dehydrated Lemon & Basil Sprig"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "Which ingredients come in Give Me Park Avenue? (Select all that apply)",
         "answers": [
           "Sazerac Rye - 2 oz",
@@ -43,6 +123,61 @@
           "Sazerac Rye - 2 oz",
           "Sweet Vermouth - 1 oz",
           "Angostura Bitters - 2 to 3 Dashes"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Sazerac Rye goes in Give Me Park Avenue?",
+        "answers": [
+          "2 oz",
+          "1.5 oz",
+          "1 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "2 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Sweet Vermouth goes in Give Me Park Avenue?",
+        "answers": [
+          "1 oz",
+          "2 oz",
+          "1.5 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Angostura Bitters goes in Give Me Park Avenue?",
+        "answers": [
+          "2 to 3 Dashes",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          "2 to 3 Dashes"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which garnishes go on Give Me Park Avenue? (Select all that apply)",
+        "answers": [
+          "Cherry",
+          "Orange Twist",
+          "Dehydrated Lemon & Basil Sprig",
+          "1 to 3 Olives",
+          "Olive",
+          "Chili"
+        ],
+        "correct-answers": [
+          "Cherry",
+          "Orange Twist"
         ]
       },
       {
@@ -65,6 +200,60 @@
       },
       {
         "type": "multiple-choice",
+        "question": "How much Vodka or Gin goes in Olive Your Dirty?",
+        "answers": [
+          "2.5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          "2.5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Dry Vermouth goes in Olive Your Dirty?",
+        "answers": [
+          ".5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Olive Brine goes in Olive Your Dirty?",
+        "answers": [
+          "1 oz",
+          "2 oz",
+          "1.5 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which garnishes go on Olive Your Dirty? (Select all that apply)",
+        "answers": [
+          "1 to 3 Olives",
+          "Dehydrated Lemon & Basil Sprig",
+          "Cherry",
+          "Orange Twist",
+          "Olive",
+          "Chili"
+        ],
+        "correct-answers": [
+          "1 to 3 Olives"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "Which ingredients come in Mary Not Martha? (Select all that apply)",
         "answers": [
           "Vodka - 2 oz",
@@ -78,6 +267,49 @@
         "correct-answers": [
           "Vodka - 2 oz",
           "Bloody Mary Mix - 3 oz (Pour First)"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Vodka goes in Mary Not Martha?",
+        "answers": [
+          "2 oz",
+          "1.5 oz",
+          "1 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "2 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Bloody Mary Mix goes in Mary Not Martha?",
+        "answers": [
+          "3 oz (Pour First)",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          "3 oz (Pour First)"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which garnishes go on Mary Not Martha? (Select all that apply)",
+        "answers": [
+          "Olive",
+          "Chili",
+          "Pickled Carrot",
+          "Dehydrated Lemon & Basil Sprig",
+          "Cherry",
+          "Orange Twist"
+        ],
+        "correct-answers": [
+          "Olive",
+          "Chili",
+          "Pickled Carrot"
         ]
       },
       {
@@ -100,6 +332,60 @@
       },
       {
         "type": "multiple-choice",
+        "question": "How much Gin goes in Negroni?",
+        "answers": [
+          "1 oz",
+          "2 oz",
+          "1.5 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Campari goes in Negroni?",
+        "answers": [
+          "1 oz",
+          "2 oz",
+          "1.5 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Sweet Vermouth goes in Negroni?",
+        "answers": [
+          "1 oz",
+          "2 oz",
+          "1.5 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which garnishes go on Negroni? (Select all that apply)",
+        "answers": [
+          "Orange Twist",
+          "Dehydrated Lemon & Basil Sprig",
+          "Cherry",
+          "1 to 3 Olives",
+          "Olive",
+          "Chili"
+        ],
+        "correct-answers": [
+          "Orange Twist"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "Which ingredients come in Pink Horizon? (Select all that apply)",
         "answers": [
           "Corazon Blanco - 2 oz",
@@ -114,6 +400,60 @@
           "Corazon Blanco - 2 oz",
           "Lime Juice - .5 oz",
           "Grapefruit Soda - 2 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Corazon Blanco goes in Pink Horizon?",
+        "answers": [
+          "2 oz",
+          "1.5 oz",
+          "1 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "2 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Lime Juice goes in Pink Horizon?",
+        "answers": [
+          ".5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Grapefruit Soda goes in Pink Horizon?",
+        "answers": [
+          "2 oz",
+          "1.5 oz",
+          "1 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "2 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which garnishes go on Pink Horizon? (Select all that apply)",
+        "answers": [
+          "Grapefruit Slice",
+          "Lime Wheel",
+          "Dehydrated Lemon & Basil Sprig",
+          "Cherry",
+          "Orange Twist",
+          "1 to 3 Olives"
+        ],
+        "correct-answers": [
+          "Grapefruit Slice"
         ]
       },
       {
@@ -139,6 +479,88 @@
       },
       {
         "type": "multiple-choice",
+        "question": "How much Jalapeno Infused Tequila goes in Spicy T & M?",
+        "answers": [
+          "1.5 oz",
+          "2 oz",
+          "1 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1.5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Gran Gala goes in Spicy T & M?",
+        "answers": [
+          ".5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Butterfly Pea Flower Syrup goes in Spicy T & M?",
+        "answers": [
+          ".5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Lime Juice goes in Spicy T & M?",
+        "answers": [
+          "1 oz",
+          "2 oz",
+          "1.5 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Pineapple Juice goes in Spicy T & M?",
+        "answers": [
+          ".5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which garnishes go on Spicy T & M? (Select all that apply)",
+        "answers": [
+          "Pineapple Frond",
+          "Dehydrated Lime",
+          "Jalapeno Slice",
+          "Dehydrated Lemon & Basil Sprig",
+          "Cherry",
+          "Orange Twist"
+        ],
+        "correct-answers": [
+          "Pineapple Frond",
+          "Dehydrated Lime",
+          "Jalapeno Slice"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "Which ingredients come in Sunset Sangria? (Select all that apply)",
         "answers": [
           "Pinot Grigio or Pinot Noir - 2 oz",
@@ -160,6 +582,88 @@
       },
       {
         "type": "multiple-choice",
+        "question": "How much Pinot Grigio or Pinot Noir goes in Sunset Sangria?",
+        "answers": [
+          "2 oz",
+          "1.5 oz",
+          "1 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "2 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Captain Morgan goes in Sunset Sangria?",
+        "answers": [
+          ".5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Gran Gala goes in Sunset Sangria?",
+        "answers": [
+          ".5 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Five Spice Syrup goes in Sunset Sangria?",
+        "answers": [
+          ".25 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".25 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Pineapple Juice goes in Sunset Sangria?",
+        "answers": [
+          "2 oz",
+          "1.5 oz",
+          "1 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "2 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which garnishes go on Sunset Sangria? (Select all that apply)",
+        "answers": [
+          "Pineapple Frond",
+          "2 Cherries",
+          "3 Orange Slices",
+          "Dehydrated Lemon & Basil Sprig",
+          "Cherry",
+          "Orange Twist"
+        ],
+        "correct-answers": [
+          "Pineapple Frond",
+          "2 Cherries",
+          "3 Orange Slices"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "Which ingredients come in Crouching Tiger? (Select all that apply)",
         "answers": [
           "Lime Juice - 1 oz",
@@ -177,6 +681,86 @@
           "Pineapple Juice - .25 oz",
           "Shiso Leaf - 1",
           "Soda Water (Topped)"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Lime Juice goes in Crouching Tiger?",
+        "answers": [
+          "1 oz",
+          "2 oz",
+          "1.5 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Matcha Syrup goes in Crouching Tiger?",
+        "answers": [
+          "1 oz",
+          "2 oz",
+          "1.5 oz",
+          ".75 oz"
+        ],
+        "correct-answers": [
+          "1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Pineapple Juice goes in Crouching Tiger?",
+        "answers": [
+          ".25 oz",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          ".25 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Shiso Leaf goes in Crouching Tiger?",
+        "answers": [
+          "1",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          "1"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "How much Soda Water goes in Crouching Tiger?",
+        "answers": [
+          "Topped",
+          "2 oz",
+          "1.5 oz",
+          "1 oz"
+        ],
+        "correct-answers": [
+          "Topped"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which garnishes go on Crouching Tiger? (Select all that apply)",
+        "answers": [
+          "Flower",
+          "Dehydrated Lemon & Basil Sprig",
+          "Cherry",
+          "Orange Twist",
+          "1 to 3 Olives",
+          "Olive"
+        ],
+        "correct-answers": [
+          "Flower"
         ]
       }
     ]
