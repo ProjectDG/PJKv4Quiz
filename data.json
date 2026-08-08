@@ -3,19 +3,181 @@
     "id": "flashcards",
     "question-type": "multiple-choice",
     "label": "Flash Cards",
-    "description": "Practice questions with multiple-choice or single-answer cards.",
+    "description": "Practice ingredient recall with multiple-choice cards.",
     "type": "flashcards",
     "items": [
       {
         "type": "multiple-choice",
-        "question": "Select all beers currently on tap.",
-        "answers": ["Sapporo", "Asahi", "Turtle Season", "Orange Blossom Pilsner", "Bud Light", "Heineken", "Guinness", "Corona"],
-        "correct-answers": ["Sapporo", "Asahi", "Turtle Season", "Orange Blossom Pilsner"]
+        "question": "Which ingredients come in Call Me 'Koko'? (Select all that apply)",
+        "answers": [
+          "Rivi Gin - 1.5 oz",
+          "Cincoro Reposado - .5 oz",
+          "Lychee Syrup - .5 oz",
+          "Lemon Juice - .75 oz",
+          "Pomegranate Juice - .75 oz",
+          "Campari - 1 oz",
+          "Olive Brine - 1 oz",
+          "Grapefruit Soda - 2 oz"
+        ],
+        "correct-answers": [
+          "Rivi Gin - 1.5 oz",
+          "Cincoro Reposado - .5 oz",
+          "Lychee Syrup - .5 oz",
+          "Lemon Juice - .75 oz",
+          "Pomegranate Juice - .75 oz"
+        ]
       },
       {
-        "type": "single-answer",
-        "question": "What is the signature house drink?",
-        "answer": "Sakura Tini"
+        "type": "multiple-choice",
+        "question": "Which ingredients come in Give Me Park Avenue? (Select all that apply)",
+        "answers": [
+          "Sazerac Rye - 2 oz",
+          "Sweet Vermouth - 1 oz",
+          "Angostura Bitters - 2 to 3 Dashes",
+          "Dry Vermouth - .5 oz",
+          "Vodka - 2 oz",
+          "Gran Gala - .5 oz",
+          "Pineapple Juice - .5 oz"
+        ],
+        "correct-answers": [
+          "Sazerac Rye - 2 oz",
+          "Sweet Vermouth - 1 oz",
+          "Angostura Bitters - 2 to 3 Dashes"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which ingredients come in Olive Your Dirty? (Select all that apply)",
+        "answers": [
+          "Vodka or Gin - 2.5 oz",
+          "Dry Vermouth - .5 oz",
+          "Olive Brine - 1 oz",
+          "Campari - 1 oz",
+          "Lime Juice - .5 oz",
+          "Corazon Blanco - 2 oz",
+          "Bloody Mary Mix - 3 oz (Pour First)"
+        ],
+        "correct-answers": [
+          "Vodka or Gin - 2.5 oz",
+          "Dry Vermouth - .5 oz",
+          "Olive Brine - 1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which ingredients come in Mary Not Martha? (Select all that apply)",
+        "answers": [
+          "Vodka - 2 oz",
+          "Bloody Mary Mix - 3 oz (Pour First)",
+          "Olive Brine - 1 oz",
+          "Sweet Vermouth - 1 oz",
+          "Lime Juice - .5 oz",
+          "Grapefruit Soda - 2 oz",
+          "Rivi Gin - 1.5 oz"
+        ],
+        "correct-answers": [
+          "Vodka - 2 oz",
+          "Bloody Mary Mix - 3 oz (Pour First)"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which ingredients come in Negroni? (Select all that apply)",
+        "answers": [
+          "Gin - 1 oz",
+          "Campari - 1 oz",
+          "Sweet Vermouth - 1 oz",
+          "Dry Vermouth - .5 oz",
+          "Sazerac Rye - 2 oz",
+          "Angostura Bitters - 2 to 3 Dashes",
+          "Pomegranate Juice - .75 oz"
+        ],
+        "correct-answers": [
+          "Gin - 1 oz",
+          "Campari - 1 oz",
+          "Sweet Vermouth - 1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which ingredients come in Pink Horizon? (Select all that apply)",
+        "answers": [
+          "Corazon Blanco - 2 oz",
+          "Lime Juice - .5 oz",
+          "Grapefruit Soda - 2 oz",
+          "Jalapeno Infused Tequila - 1.5 oz",
+          "Gran Gala - .5 oz",
+          "Pineapple Juice - .5 oz",
+          "Sweet Vermouth - 1 oz"
+        ],
+        "correct-answers": [
+          "Corazon Blanco - 2 oz",
+          "Lime Juice - .5 oz",
+          "Grapefruit Soda - 2 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which ingredients come in Spicy T & M? (Select all that apply)",
+        "answers": [
+          "Jalapeno Infused Tequila - 1.5 oz",
+          "Gran Gala - .5 oz",
+          "Butterfly Pea Flower Syrup - .5 oz",
+          "Lime Juice - 1 oz",
+          "Pineapple Juice - .5 oz",
+          "Corazon Blanco - 2 oz",
+          "Sweet Vermouth - 1 oz",
+          "Lychee Syrup - .5 oz"
+        ],
+        "correct-answers": [
+          "Jalapeno Infused Tequila - 1.5 oz",
+          "Gran Gala - .5 oz",
+          "Butterfly Pea Flower Syrup - .5 oz",
+          "Lime Juice - 1 oz",
+          "Pineapple Juice - .5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which ingredients come in Sunset Sangria? (Select all that apply)",
+        "answers": [
+          "Pinot Grigio or Pinot Noir - 2 oz",
+          "Captain Morgan - .5 oz",
+          "Gran Gala - .5 oz",
+          "Five Spice Syrup - .25 oz",
+          "Pineapple Juice - 2 oz",
+          "Campari - 1 oz",
+          "Dry Vermouth - .5 oz",
+          "Lemon Juice - .75 oz"
+        ],
+        "correct-answers": [
+          "Pinot Grigio or Pinot Noir - 2 oz",
+          "Captain Morgan - .5 oz",
+          "Gran Gala - .5 oz",
+          "Five Spice Syrup - .25 oz",
+          "Pineapple Juice - 2 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which ingredients come in Crouching Tiger? (Select all that apply)",
+        "answers": [
+          "Lime Juice - 1 oz",
+          "Matcha Syrup - 1 oz",
+          "Pineapple Juice - .25 oz",
+          "Shiso Leaf - 1",
+          "Soda Water (Topped)",
+          "Corazon Blanco - 2 oz",
+          "Campari - 1 oz",
+          "Grapefruit Soda - 2 oz"
+        ],
+        "correct-answers": [
+          "Lime Juice - 1 oz",
+          "Matcha Syrup - 1 oz",
+          "Pineapple Juice - .25 oz",
+          "Shiso Leaf - 1",
+          "Soda Water (Topped)"
+        ]
       }
     ]
   },
@@ -23,12 +185,33 @@
     "id": "multiplechoice",
     "label": "Multiple Choice",
     "description": "Practice quick-choice questions with a clean, game-like flow.",
-    "type": "placeholder",
+    "type": "flashcards",
     "samplePrompts": [
       "Which spirit is featured in a Sakura Tini?",
       "What makes the house special?"
     ],
-    "items": []
+    "items": [
+      {
+        "type": "multiple-choice",
+        "question": "Select all beers currently on tap.",
+        "answers": [
+          "Sapporo",
+          "Asahi",
+          "Turtle Season",
+          "Orange Blossom Pilsner",
+          "Bud Light",
+          "Heineken",
+          "Guinness",
+          "Corona"
+        ],
+        "correct-answers": [
+          "Sapporo",
+          "Asahi",
+          "Turtle Season",
+          "Orange Blossom Pilsner"
+        ]
+      }
+    ]
   },
   {
     "id": "bottlerecognition",

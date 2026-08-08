@@ -426,7 +426,7 @@ function renderFlashcards(mode) {
         className += ' answer-btn-correct';
       } else if (isSelected && !isCorrect) {
         className += ' answer-btn-incorrect';
-      } else if (!isSelected && isCorrect) {
+      } else if (!modeState.answerCorrect && !isSelected && isCorrect) {
         className += ' answer-btn-missed';
       }
     } else if (isSelected) {
@@ -440,8 +440,12 @@ function renderFlashcards(mode) {
     `;
   }).join('');
 
+  const feedbackClass = modeState.revealOnly ? 'revealed' : (modeState.answerCorrect ? 'correct' : 'incorrect');
+  const revealBtnClass = `answer-btn reveal-btn${modeState.revealOnly ? ' is-revealed' : ''}`;
+  const revealBtnDisabled = modeState.revealOnly ? ' disabled aria-disabled="true"' : '';
+
   const feedbackMarkup = modeState.revealed
-    ? `<p class="feedback ${modeState.answerCorrect ? 'correct' : 'incorrect'}">${modeState.revealOnly ? 'Answer revealed. These are the correct options.' : (modeState.answerCorrect ? 'Correct! You selected the right options.' : buildFeedbackText(card, modeState.selectedOptions))}</p>`
+    ? `<p class="feedback ${feedbackClass}">${modeState.revealOnly ? 'Answer revealed. These are the correct options.' : (modeState.answerCorrect ? 'Correct! You selected the right options.' : buildFeedbackText(card, modeState.selectedOptions))}</p>`
     : '';
 
   const answerBody = isMultipleChoice
@@ -451,7 +455,7 @@ function renderFlashcards(mode) {
         </div>
         <div class="single-answer-actions">
           <button class="answer-btn" type="button" data-action="check">Check Answers</button>
-          <button class="answer-btn reveal-btn" type="button" data-action="reveal">Show Answers</button>
+          <button class="${revealBtnClass}" type="button" data-action="reveal"${revealBtnDisabled}>${modeState.revealOnly ? 'Answers Revealed' : 'Show Answers'}</button>
         </div>
         ${feedbackMarkup}
       `
@@ -461,9 +465,9 @@ function renderFlashcards(mode) {
           <input id="answerInput" class="answer-input" type="text" value="${escapeAttribute(modeState.inputValue || '')}" placeholder="Type your answer here" />
           <div class="single-answer-actions">
             <button class="answer-btn" type="button" data-action="check">Check Answer</button>
-            <button class="answer-btn reveal-btn" type="button" data-action="reveal">Show Answer</button>
+            <button class="${revealBtnClass}" type="button" data-action="reveal"${revealBtnDisabled}>${modeState.revealOnly ? 'Answer Revealed' : 'Show Answer'}</button>
           </div>
-          ${modeState.revealed ? `<p class="feedback ${modeState.answerCorrect ? 'correct' : 'incorrect'}">${modeState.revealOnly ? 'Answer revealed below.' : (modeState.answerCorrect ? 'Nice! That looks right.' : `Not quite — the answer is ${escapeHtml(card.answer || '')}.`)}</p>` : ''}
+          ${modeState.revealed ? `<p class="feedback ${feedbackClass}">${modeState.revealOnly ? 'Answer revealed below.' : (modeState.answerCorrect ? 'Nice! That looks right.' : `Not quite — the answer is ${escapeHtml(card.answer || '')}.`)}</p>` : ''}
           ${modeState.revealed ? `<p class="single-answer-value">Answer: ${escapeHtml(card.answer || '')}</p>` : ''}
         </div>
       `;

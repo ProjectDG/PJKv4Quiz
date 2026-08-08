@@ -47,10 +47,18 @@ header.header {
   min-height: 96px;
   background: linear-gradient(135deg, var(--header-bg), rgba(255, 255, 255, 0.12));
   backdrop-filter: blur(8px);
-  border-bottom: 4px solid;
-  border-image: linear-gradient(90deg, var(--primary-color), var(--primary-light), var(--primary-color)) 1;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
-  border-radius: 0 0 22px 22px;
+  border-radius: 0;
+}
+
+header.header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light), var(--primary-color));
 }
 
 .title {
@@ -115,6 +123,10 @@ header.header {
   background-color: var(--text-color);
   border-radius: 2px;
   transition: all 0.3s ease;
+}
+
+html[data-theme="original"] .menu-btn span {
+  background-color: #1a120d;
 }
 
 .container {
@@ -350,6 +362,22 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
 
 .feedback.incorrect {
   color: #ff6b6b;
+}
+
+.feedback.revealed {
+  color: var(--text-color);
+  opacity: 0.88;
+}
+
+.reveal-btn.is-revealed,
+.reveal-btn.is-revealed:hover {
+  background: var(--button-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+  transform: none;
+  box-shadow: none;
+  opacity: 0.9;
+  cursor: default;
 }
 
 .single-answer-block {
