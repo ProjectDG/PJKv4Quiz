@@ -16,6 +16,8 @@ function createModeState() {
     index: 0,
     revealed: false,
     selectedOptions: [],
+    selectedBrand: '',
+    selectedType: '',
     inputValue: '',
     answerCorrect: null,
     answerOrder: [],
@@ -30,6 +32,8 @@ function resetCardProgress(modeState) {
   modeState.index = 0;
   modeState.revealed = false;
   modeState.selectedOptions = [];
+  modeState.selectedBrand = '';
+  modeState.selectedType = '';
   modeState.inputValue = '';
   modeState.answerCorrect = null;
   modeState.answerOrder = [];
@@ -141,6 +145,8 @@ function bindEvents() {
       modeState.index = Math.max(0, modeState.index - 1);
       modeState.revealed = false;
       modeState.selectedOptions = [];
+      modeState.selectedBrand = '';
+      modeState.selectedType = '';
       modeState.inputValue = '';
       modeState.answerCorrect = null;
       modeState.answerOrder = [];
@@ -157,7 +163,14 @@ function bindEvents() {
       const card = mode && Array.isArray(mode.items) ? mode.items[cardIndex] : null;
 
       if (!modeState.revealed && card) {
-        if (isMultipleChoiceCard(card)) {
+        if (mode?.type === 'bottle-recognition') {
+          const brandCorrect = String(card?.brand || '').trim().toLowerCase();
+          const typeCorrect = String(card?.alcoholType || '').trim().toLowerCase();
+          const brandSubmitted = String(modeState.selectedBrand || '').trim().toLowerCase();
+          const typeSubmitted = String(modeState.selectedType || '').trim().toLowerCase();
+          modeState.revealed = true;
+          modeState.answerCorrect = brandSubmitted === brandCorrect && typeSubmitted === typeCorrect;
+        } else if (isMultipleChoiceCard(card)) {
           const expected = getCorrectAnswers(card);
           const submitted = Array.isArray(modeState.selectedOptions) ? modeState.selectedOptions : [];
           modeState.revealed = true;
@@ -179,6 +192,8 @@ function bindEvents() {
       modeState.index = Math.min(Math.max(itemCount - 1, 0), modeState.index + 1);
       modeState.revealed = false;
       modeState.selectedOptions = [];
+      modeState.selectedBrand = '';
+      modeState.selectedType = '';
       modeState.inputValue = '';
       modeState.answerCorrect = null;
       modeState.answerOrder = [];
@@ -193,6 +208,19 @@ function bindEvents() {
       const cardOrder = mode ? getOrBuildCardOrder(mode, modeState) : [];
       const cardIndex = cardOrder[modeState.index] ?? modeState.index;
       const card = mode && Array.isArray(mode.items) ? mode.items[cardIndex] : null;
+      if (mode?.type === 'bottle-recognition') {
+        const brandCorrect = String(card?.brand || '').trim().toLowerCase();
+        const typeCorrect = String(card?.alcoholType || '').trim().toLowerCase();
+        const brandSubmitted = String(modeState.selectedBrand || '').trim().toLowerCase();
+        const typeSubmitted = String(modeState.selectedType || '').trim().toLowerCase();
+        modeState.revealed = true;
+        modeState.answerCorrect = brandSubmitted === brandCorrect && typeSubmitted === typeCorrect;
+        modeState.revealOnly = false;
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
       if (isMultipleChoiceCard(card)) {
         const expected = getCorrectAnswers(card);
         const submitted = Array.isArray(modeState.selectedOptions) ? modeState.selectedOptions : [];
@@ -225,6 +253,20 @@ function bindEvents() {
 
     if (button.dataset.option !== undefined) {
       const option = String(button.dataset.option || '');
+      const mode = state.modes.find((entry) => entry.id === modeId);
+      if (mode?.type === 'bottle-recognition') {
+        if (button.dataset.group === 'brand') {
+          modeState.selectedBrand = option;
+        } else if (button.dataset.group === 'type') {
+          modeState.selectedType = option;
+        }
+        modeState.revealed = false;
+        modeState.answerCorrect = null;
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
       const selectedOptions = Array.isArray(modeState.selectedOptions) ? [...modeState.selectedOptions] : [];
       const optionIndex = selectedOptions.indexOf(option);
       if (optionIndex >= 0) {
@@ -337,6 +379,19 @@ function normalizeItem(item) {
   if (!item || typeof item !== 'object') return null;
 
   const questionType = item['question-type'] || item.type || 'multiple-choice';
+
+  if (questionType === 'bottle-recognition') {
+    return {
+      type: 'bottle-recognition',
+      question: item.question || 'Identify the bottle',
+      image: item.image || '',
+      brand: item.brand || '',
+      alcoholType: item.alcoholType || item.alcohol_type || '',
+      brandOptions: Array.isArray(item.brandOptions) ? item.brandOptions.filter((entry) => typeof entry === 'string' && entry.trim()) : [],
+      typeOptions: Array.isArray(item.typeOptions) ? item.typeOptions.filter((entry) => typeof entry === 'string' && entry.trim()) : []
+    };
+  }
+
   const hasChoices = questionType === 'multiple-choice' || Array.isArray(item.answers) || Array.isArray(item.options) || Array.isArray(item.choices) || Array.isArray(item['corect-answers']) || Array.isArray(item['correct-answers']) || Array.isArray(item.correctAnswers) || Array.isArray(item['correctAnswers']) || Array.isArray(item.distractors);
 
   if (hasChoices && questionType !== 'single-answer') {
@@ -397,6 +452,11 @@ function renderView() {
 
   if (mode.type === 'flashcards') {
     renderFlashcards(mode);
+    return;
+  }
+
+  if (mode.type === 'bottle-recognition') {
+    renderBottleRecognition(mode);
     return;
   }
 
@@ -461,6 +521,78 @@ function renderPlaceholderMode(mode) {
         <h3>${escapeHtml(mode.description || 'This mode is ready for more content.')}</h3>
         <p class="placeholder-copy">This screen is now wired for future prompts, answer keys, and scoring so new quiz modes can be added without rebuilding the shell.</p>
         ${promptsMarkup}
+      </div>
+    </section>
+  `;
+  updateActiveModeButtons();
+}
+
+function renderBottleRecognition(mode) {
+  const modeState = state.flashcards[mode.id] || createModeState();
+  state.flashcards[mode.id] = modeState;
+
+  const cardOrder = Array.isArray(mode.items) ? mode.items.map((_, index) => index) : [];
+  const itemCount = cardOrder.length;
+  if (modeState.index > Math.max(itemCount - 1, 0)) {
+    modeState.index = Math.max(itemCount - 1, 0);
+  }
+
+  const cardIndex = cardOrder[modeState.index] ?? modeState.index;
+  const card = Array.isArray(mode.items) ? mode.items[cardIndex] : null;
+
+  const brandOptions = Array.isArray(card?.brandOptions) && card.brandOptions.length ? card.brandOptions : [];
+  const typeOptions = Array.isArray(card?.typeOptions) && card.typeOptions.length ? card.typeOptions : [];
+  const selectedBrand = String(modeState.selectedBrand || '').trim();
+  const selectedType = String(modeState.selectedType || '').trim();
+  const correctBrand = String(card?.brand || '').trim();
+  const correctType = String(card?.alcoholType || '').trim();
+
+  const brandOptionsMarkup = brandOptions.map((option) => {
+    const normalizedOption = String(option);
+    const isSelected = selectedBrand === normalizedOption;
+    const className = `answer-btn bottle-choice-btn${isSelected ? ' selected' : ''}${modeState.revealed && normalizedOption === correctBrand ? ' answer-btn-correct' : ''}${modeState.revealed && isSelected && normalizedOption !== correctBrand ? ' answer-btn-incorrect' : ''}`;
+    return `<button class="${className}" type="button" data-option="${escapeAttribute(normalizedOption)}" data-group="brand">${escapeHtml(normalizedOption)}</button>`;
+  }).join('');
+
+  const typeOptionsMarkup = typeOptions.map((option) => {
+    const normalizedOption = String(option);
+    const isSelected = selectedType === normalizedOption;
+    const className = `answer-btn bottle-choice-btn${isSelected ? ' selected' : ''}${modeState.revealed && normalizedOption === correctType ? ' answer-btn-correct' : ''}${modeState.revealed && isSelected && normalizedOption !== correctType ? ' answer-btn-incorrect' : ''}`;
+    return `<button class="${className}" type="button" data-option="${escapeAttribute(normalizedOption)}" data-group="type">${escapeHtml(normalizedOption)}</button>`;
+  }).join('');
+
+  const feedbackMarkup = modeState.revealed
+    ? `<p class="feedback ${modeState.answerCorrect ? 'correct' : 'incorrect'}">${modeState.answerCorrect ? 'Nice work — you identified both the brand and the alcohol type.' : `Not quite — the brand was ${escapeHtml(correctBrand || 'unknown')} and the alcohol type was ${escapeHtml(correctType || 'unknown')}.`}</p>`
+    : '';
+
+  const nextButtonLabel = modeState.revealed ? 'Next' : 'Check';
+
+  mainContainer.innerHTML = `
+    <section class="quiz-view">
+      <div class="quiz-header">
+        <button class="back-btn" type="button" data-action="back">Back</button>
+        <h2>${escapeHtml(mode.label)}</h2>
+      </div>
+      <div class="quiz-card bottle-card">
+        <p class="quiz-counter">Bottle recognition • ${modeState.index + 1} / ${itemCount}</p>
+        <div class="bottle-image-panel">
+          <img class="bottle-image" src="${escapeAttribute(card?.image || '')}" alt="Bottle image to identify" />
+        </div>
+        <div class="bottle-choices">
+          <div class="bottle-choice-group">
+            <h3>Brand</h3>
+            <div class="choice-grid">${brandOptionsMarkup}</div>
+          </div>
+          <div class="bottle-choice-group">
+            <h3>Alcohol Type</h3>
+            <div class="choice-grid">${typeOptionsMarkup}</div>
+          </div>
+          ${feedbackMarkup}
+        </div>
+      </div>
+      <div class="quiz-actions">
+        <button class="action-btn" type="button" data-action="prev">Previous</button>
+        <button class="action-btn" type="button" data-action="next">${nextButtonLabel}</button>
       </div>
     </section>
   `;
@@ -554,9 +686,9 @@ function renderFlashcards(mode) {
         </div>
         ${feedbackMarkup}
         <div class="answer-key" aria-label="Answer color key">
-          <p><span class="answer-key-dot key-correct"></span> Green: Picked correct</p>
-          <p><span class="answer-key-dot key-incorrect"></span> Red: Picked incorrect</p>
-          <p><span class="answer-key-dot key-missed"></span> Yellow: Missed correct</p>
+          <p><span class="answer-key-dot key-correct"></span> Correct</p>
+          <p><span class="answer-key-dot key-incorrect"></span> Incorrect</p>
+          <p><span class="answer-key-dot key-missed"></span> Missed</p>
         </div>
       `
     : `
@@ -604,7 +736,7 @@ function renderFlashcards(mode) {
       </div>
       <div class="quiz-card">
         <p class="quiz-counter">${modeState.index + 1} / ${itemCount}</p>
-        <h3>${escapeHtml(card.question || 'Untitled question')}</h3>
+        <h3>${escapeHtml(card.question || 'Untitled question').replace(/&lt;u&gt;/g, '<u>').replace(/&lt;\/u&gt;/g, '</u>')}</h3>
         ${answerBody}
       </div>
       <div class="quiz-actions">
@@ -770,7 +902,7 @@ function applyTheme(theme) {
   switch (theme) {
     case 'original':
       root.style.setProperty('--bg-color', '#000000');
-      root.style.setProperty('--bg-image', 'url(./images/japan.png)');
+      root.style.setProperty('--bg-image', 'url(./images/japan.jpg)');
       root.style.setProperty('--primary-color', '#8B7500');
       root.style.setProperty('--primary-light', '#B8860B');
       root.style.setProperty('--primary-bright', '#DAA520');
@@ -781,7 +913,7 @@ function applyTheme(theme) {
       root.style.setProperty('--border-color', '#8B7500');
       root.style.setProperty('--button-bg', 'rgba(255, 255, 255, 0.1)');
       root.style.setProperty('--button-hover-bg', 'rgba(184, 134, 11, 0.3)');
-      body.style.backgroundImage = 'url(./images/japan.png)';
+      body.style.backgroundImage = 'url(./images/japan.jpg)';
       body.style.backgroundColor = '#000000';
       body.style.textShadow = 'none';
       body.style.fontFamily = 'Arial, sans-serif';

@@ -794,6 +794,31 @@
           "Turtle Season",
           "Orange Blossom Pilsner"
         ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Select all beers that are <u>NOT</u> on tap.",
+        "answers": [
+          "Michelob Ultra",
+          "Modello Especial",
+          "High 5 IPA",
+          "Heineken 0.0",
+          "Sapporo",
+          "Coors Lt.",
+          "Tsingtao",
+          "Asahi",
+          "Bud Light",
+          "Corona"
+        ],
+        "correct-answers": [
+          "Michelob Ultra",
+          "Modello Especial",
+          "High 5 IPA",
+          "Heineken 0.0",
+          "Sapporo",
+          "Coors Lt.",
+          "Tsingtao"
+        ]
       }
     ]
   },
@@ -801,12 +826,31 @@
     "id": "bottlerecognition",
     "label": "Bottle Recognition",
     "description": "Identify bottles, spirits, and classic pours at a glance.",
-    "type": "placeholder",
+    "type": "bottle-recognition",
     "samplePrompts": [
       "Spot the bottle for a Japanese whisky pour.",
       "Match the spirit to the service note."
     ],
-    "items": []
+    "items": [
+      {
+        "type": "bottle-recognition",
+        "image": "images/the_critic_cabernet.jpg",
+        "brand": "The Critic",
+        "alcoholType": "Cabernet Sauvignon",
+        "brandOptions": [
+          "The Critic",
+          "The Vineyard",
+          "Blue Creek",
+          "North Point"
+        ],
+        "typeOptions": [
+          "Cabernet Sauvignon",
+          "Pinot Noir",
+          "Chardonnay",
+          "Rosé"
+        ]
+      }
+    ]
   },
   {
     "id": "builddrink",

@@ -7,7 +7,7 @@
 :root {
   /* Dark Theme (Default) */
   --bg-color: #000;
-  --bg-image: url('./images/japan.png');
+  --bg-image: url('./images/japan.jpg');
   --primary-color: #8b0a1f;
   --primary-light: #c41e3a;
   --primary-bright: #ff1744;
@@ -321,6 +321,82 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
   line-height: 1.4;
 }
 
+.quiz-card h3 u {
+  font-size: 1.35em;
+  color: #ff4d4d;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.bottle-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 18px;
+  width: 100%;
+  align-items: start;
+}
+
+.bottle-image-panel {
+  position: relative;
+  width: 100%;
+  max-height: min(70vh, 560px);
+  aspect-ratio: 4 / 5;
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottle-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.bottle-card .quiz-counter {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.bottle-choices {
+  display: grid;
+  gap: 12px;
+  align-self: stretch;
+}
+
+.bottle-choice-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bottle-choice-group h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-color);
+}
+
+.choice-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.bottle-choice-btn {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 12px;
+}
+
 .answer-list {
   display: grid;
   gap: 10px;
@@ -440,19 +516,22 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
   flex-wrap: wrap;
   gap: 14px;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  text-align: center;
   background: rgba(0, 0, 0, 0.1);
   border-radius: 0 0 18px 18px;
 }
 
 .answer-key p {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin: 0;
   font-size: 0.92rem;
   color: var(--text-color);
   opacity: 0.88;
+  text-align: center;
 }
 
 .answer-key-dot {
