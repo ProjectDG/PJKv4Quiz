@@ -48,7 +48,6 @@ header.header {
   background: linear-gradient(135deg, var(--header-bg), rgba(255, 255, 255, 0.12));
   backdrop-filter: blur(8px);
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
-  border-radius: 0;
 }
 
 header.header::after {
@@ -78,7 +77,7 @@ header.header::after {
   left: 25px;
   background: var(--button-bg);
   border: 2px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--text-color);
   cursor: pointer;
   font-size: 0.95rem;
@@ -100,7 +99,7 @@ header.header::after {
   right: 25px;
   background: var(--button-bg);
   border: 2px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 0;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -137,6 +136,18 @@ html[data-theme="original"] .menu-btn span {
   padding: 24px 20px 40px;
 }
 
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
 .original-theme-titles {
   color: rgba(94, 92, 92, 0.85);
   text-shadow: 0 0 6px rgba(71, 71, 71, 0.2);
@@ -171,6 +182,7 @@ html[data-theme="original"] .mode-menu-intro {
   width: 100%;
   display: grid;
   gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .mode-btn,
@@ -178,7 +190,7 @@ html[data-theme="original"] .mode-menu-intro {
 .action-btn,
 .answer-btn {
   border: 2px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 0;
   background: var(--button-bg);
   color: var(--text-color);
   cursor: pointer;
@@ -268,7 +280,7 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
 .quiz-card {
   width: 100%;
   padding: 24px;
-  border-radius: 18px;
+  border-radius: 0;
   border: 2px solid var(--border-color);
   background: var(--modal-bg);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
@@ -342,7 +354,7 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
   width: 100%;
   max-height: min(70vh, 560px);
   aspect-ratio: 4 / 5;
-  border-radius: 18px;
+  border-radius: 0;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.18);
@@ -519,7 +531,7 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
   justify-content: center;
   text-align: center;
   background: rgba(0, 0, 0, 0.1);
-  border-radius: 0 0 18px 18px;
+  border-radius: 0;
 }
 
 .answer-key p {
@@ -554,6 +566,89 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
   background: #f1c40f;
 }
 
+@media (max-width: 900px) {
+  .quiz-header,
+  .quiz-actions {
+    flex-wrap: wrap;
+  }
+
+  .back-btn,
+  .action-btn {
+    flex: 1 1 140px;
+  }
+
+  .drink-picker-btn {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: clamp(1.35rem, 5vw, 2.2rem);
+    padding: 0 86px;
+  }
+
+  header.header {
+    min-height: 88px;
+    padding: 18px 14px;
+  }
+
+  .main-menu-btn,
+  .menu-btn {
+    transform: none;
+  }
+
+  .main-menu-btn {
+    left: 12px;
+    font-size: 0.8rem;
+    padding: 8px 10px;
+  }
+
+  .menu-btn {
+    right: 12px;
+    width: 42px;
+    height: 42px;
+    padding: 9px;
+    gap: 5px;
+  }
+
+  .menu-btn span {
+    width: 24px;
+    height: 3px;
+  }
+
+  .mode-menu,
+  .quiz-view {
+    gap: 14px;
+  }
+
+  .mode-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-btn {
+    min-height: 88px;
+    padding: 14px 16px;
+  }
+
+  .quiz-card {
+    padding: 18px 16px;
+  }
+
+  .bottle-card {
+    grid-template-columns: 1fr;
+  }
+
+  .bottle-image-panel {
+    max-height: min(42vh, 360px);
+  }
+
+  .choice-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 480px) {
   .answer-key {
     margin-left: -18px;
@@ -561,6 +656,27 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
     margin-bottom: -18px;
     padding: 10px 18px 12px;
     gap: 10px;
+  }
+
+  .title {
+    font-size: clamp(1rem, 6vw, 1.5rem);
+    padding: 0 72px;
+  }
+
+  .main-menu-btn {
+    font-size: 0.72rem;
+    padding: 7px 8px;
+    max-width: 74px;
+  }
+
+  .quiz-header,
+  .quiz-actions {
+    gap: 10px;
+  }
+
+  .back-btn,
+  .action-btn {
+    flex: 1 1 100%;
   }
 }
 
@@ -649,6 +765,98 @@ html[data-theme="cyberpunk"] .mode-btn-copy {
   .mode-btn {
     min-height: 108px;
     padding: 16px 16px;
+  }
+
+  .quiz-header {
+    width: fit-content;
+    max-width: 100%;
+    justify-content: flex-start;
+    align-self: flex-start;
+    gap: 8px;
+  }
+
+  .quiz-header .back-btn {
+    margin-left: 0;
+    padding: 7px 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .quiz-header h2 {
+    margin-right: 0;
+    white-space: nowrap;
+  }
+
+  .bottle-card {
+    grid-template-columns: 1fr;
+  }
+
+  .bottle-image-panel {
+    max-height: min(42vh, 420px);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) and (max-width: 900px) {
+  header.header {
+    min-height: 72px;
+    padding: 10px 12px;
+  }
+
+  .title {
+    padding: 0 78px;
+    font-size: clamp(1rem, 2.7vw, 1.7rem);
+    letter-spacing: 0.45px;
+  }
+
+  .container {
+    padding: 10px 12px 18px;
+  }
+
+  .mode-menu,
+  .quiz-view {
+    width: min(560px, 100%);
+    gap: 10px;
+  }
+
+  .quiz-card {
+    padding: 16px;
+  }
+
+  .mode-btn {
+    min-height: 72px;
+    padding: 10px 12px;
+  }
+
+  .mode-btn-title {
+    font-size: 0.9rem;
+  }
+
+  .mode-btn-copy {
+    font-size: 0.8rem;
+  }
+
+  .quiz-header,
+  .quiz-actions {
+    gap: 8px;
+  }
+
+  .back-btn,
+  .action-btn,
+  .answer-btn {
+    padding: 8px 10px;
+    font-size: 0.84rem;
+  }
+
+  .bottle-card {
+    gap: 12px;
+  }
+
+  .bottle-image-panel {
+    max-height: min(32vh, 240px);
+  }
+
+  .choice-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
