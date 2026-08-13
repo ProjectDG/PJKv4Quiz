@@ -834,7 +834,7 @@
     "items": [
       {
         "type": "bottle-recognition",
-        "image": "images/the_critic_cabernet.jpg",
+        "image": "images/BR_the_critic_cabernet.jpg",
         "brand": "The Critic",
         "alcoholType": "Cabernet Sauvignon",
         "brandOptions": [
@@ -848,6 +848,24 @@
           "Pinot Noir",
           "Chardonnay",
           "Rosé"
+        ]
+      },
+      {
+        "type": "bottle-recognition",
+        "image": "images/BR_wheatleyVodka.jpg",
+        "brand": "Wheatley",
+        "alcoholType": "Vodka",
+        "brandOptions": [
+          "Wheatley",
+          "Grey Goose",
+          "Tito's",
+          "Ketel One"
+        ],
+        "typeOptions": [
+          "Vodka",
+          "Gin",
+          "Rum",
+          "Tequila"
         ]
       }
     ]

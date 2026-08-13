@@ -26,23 +26,31 @@
         <button class="close-btn" id="closeModal">&times;</button>
       </div>
       <div class="modal-body">
-        <div class="option-label">Quiz Modes</div>
-        <div class="quiz-options menu-options">
-          <button class="quiz-btn" data-mode="flashcards">Flash Cards</button>
-          <button class="quiz-btn" data-mode="multiplechoice">Multiple Choice</button>
-          <button class="quiz-btn" data-mode="bottlerecognition">Bottle Recognition</button>
-          <button class="quiz-btn" data-mode="builddrink">Build a Drink</button>
-          <button class="quiz-btn" data-mode="qnaresponses">Q&A Responses</button>
-        </div>
+        <section class="settings-section is-open" data-settings-section="modes">
+          <button class="option-label settings-toggle" type="button" data-settings-toggle="modes" aria-expanded="true" aria-controls="settings-panel-modes">
+            <span>Quiz Modes</span>
+          </button>
+          <div class="settings-panel quiz-options menu-options" id="settings-panel-modes">
+            <button class="quiz-btn" data-mode="flashcards">Flash Cards</button>
+            <button class="quiz-btn" data-mode="multiplechoice">Multiple Choice</button>
+            <button class="quiz-btn" data-mode="bottlerecognition">Bottle Recognition</button>
+            <button class="quiz-btn" data-mode="builddrink">Build a Drink</button>
+            <button class="quiz-btn" data-mode="qnaresponses">Q&A Responses</button>
+          </div>
+        </section>
 
-        <div class="option-label">Themes</div>
-        <div class="theme-options menu-options">
-          <button class="theme-btn" data-theme="original">Original</button>
-          <button class="theme-btn" data-theme="dark">Dark</button>
-          <button class="theme-btn" data-theme="light">Light</button>
-          <button class="theme-btn" data-theme="pipboy">Pip-Boy</button>
-          <button class="theme-btn" data-theme="cyberpunk">Cyberpunk</button>
-        </div>
+        <section class="settings-section" data-settings-section="themes">
+          <button class="option-label settings-toggle" type="button" data-settings-toggle="themes" aria-expanded="false" aria-controls="settings-panel-themes">
+            <span>Themes</span>
+          </button>
+          <div class="settings-panel theme-options menu-options" id="settings-panel-themes" hidden>
+            <button class="theme-btn" data-theme="original">Original</button>
+            <button class="theme-btn" data-theme="dark">Dark</button>
+            <button class="theme-btn" data-theme="light">Light</button>
+            <button class="theme-btn" data-theme="pipboy">Pip-Boy</button>
+            <button class="theme-btn" data-theme="cyberpunk">Cyberpunk</button>
+          </div>
+        </section>
       </div>
     </div>
   </div>

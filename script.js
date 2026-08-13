@@ -11,6 +11,13 @@ const state = {
   flashcards: {}
 };
 
+const BOTTLE_RECOGNITION_IMAGES = [
+  'images/BR_the_critic_cabernet.jpg',
+  'images/BR_wheatleyVodka.jpg'
+];
+
+const BOTTLE_RECOGNITION_PREFIX = 'BR_';
+
 function createModeState() {
   return {
     index: 0,
@@ -23,6 +30,10 @@ function createModeState() {
     answerOrder: [],
     revealOnly: false,
     cardOrder: [],
+    bottleBrandOrder: [],
+    bottleBrandOrderKey: '',
+    bottleTypeOrder: [],
+    bottleTypeOrderKey: '',
     focusDrink: '',
     showDrinkPicker: false
   };
@@ -37,6 +48,10 @@ function resetCardProgress(modeState) {
   modeState.inputValue = '';
   modeState.answerCorrect = null;
   modeState.answerOrder = [];
+  modeState.bottleBrandOrder = [];
+  modeState.bottleBrandOrderKey = '';
+  modeState.bottleTypeOrder = [];
+  modeState.bottleTypeOrderKey = '';
   modeState.revealOnly = false;
 }
 
@@ -58,6 +73,7 @@ function initApp() {
 function bindEvents() {
   menuBtn.addEventListener('click', () => {
     settingsModal.classList.add('active');
+    setSettingsSectionOpen('modes');
   });
 
   closeModal.addEventListener('click', () => {
@@ -67,7 +83,22 @@ function bindEvents() {
   settingsModal.addEventListener('click', (event) => {
     if (event.target === settingsModal) {
       settingsModal.classList.remove('active');
+      return;
     }
+
+    const toggleButton = event.target.closest('[data-settings-toggle]');
+    if (!toggleButton) {
+      return;
+    }
+
+    const sectionId = String(toggleButton.getAttribute('data-settings-toggle') || '').trim();
+    if (!sectionId) {
+      return;
+    }
+
+    const section = settingsModal.querySelector(`[data-settings-section="${sectionId}"]`);
+    const isOpen = Boolean(section && section.classList.contains('is-open'));
+    setSettingsSectionOpen(isOpen ? '' : sectionId);
   });
 
   themeBtns.forEach((btn) => {
@@ -304,6 +335,27 @@ function bindEvents() {
   });
 }
 
+function setSettingsSectionOpen(openSectionId) {
+  if (!settingsModal) return;
+
+  const sections = settingsModal.querySelectorAll('[data-settings-section]');
+  sections.forEach((section) => {
+    const sectionId = String(section.getAttribute('data-settings-section') || '').trim();
+    const shouldOpen = Boolean(openSectionId && sectionId === openSectionId);
+    const toggleButton = section.querySelector('[data-settings-toggle]');
+    const panel = section.querySelector('.settings-panel');
+
+    section.classList.toggle('is-open', shouldOpen);
+    if (toggleButton) {
+      toggleButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
+
+    if (panel) {
+      panel.hidden = !shouldOpen;
+    }
+  });
+}
+
 async function loadModes() {
   try {
     const response = await fetch('./data.json');
@@ -480,12 +532,21 @@ function renderView() {
 }
 
 function renderModeMenu() {
-  const cardsMarkup = state.modes.map((mode) => `
-    <button class="mode-btn${state.currentView === mode.id ? ' active' : ''}" type="button" data-mode="${escapeAttribute(mode.id)}">
-      <span class="mode-btn-title">${escapeHtml(mode.label)}</span>
-      <span class="mode-btn-copy original-theme-titles">${escapeHtml(mode.description || 'Start this quiz mode.')}</span>
-    </button>
-  `).join('');
+  const cardsMarkup = state.modes.map((mode) => {
+    const modeClassToken = String(mode.id || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-');
+
+    return `
+      <button class="mode-btn mode-btn--${escapeAttribute(modeClassToken || 'default')}${state.currentView === mode.id ? ' active' : ''}" type="button" data-mode="${escapeAttribute(mode.id)}">
+        <span class="mode-btn-header">
+          <span class="mode-btn-title">${escapeHtml(mode.label)}</span>
+        </span>
+        <span class="mode-btn-copy original-theme-titles">${escapeHtml(mode.description || 'Start this quiz mode.')}</span>
+      </button>
+    `;
+  }).join('');
 
   mainContainer.innerHTML = `
     <section class="mode-menu">
@@ -539,22 +600,27 @@ function renderBottleRecognition(mode) {
 
   const cardIndex = cardOrder[modeState.index] ?? modeState.index;
   const card = Array.isArray(mode.items) ? mode.items[cardIndex] : null;
+  const imageSrc = resolveBottleRecognitionImage(card, modeState.index);
 
   const brandOptions = Array.isArray(card?.brandOptions) && card.brandOptions.length ? card.brandOptions : [];
   const typeOptions = Array.isArray(card?.typeOptions) && card.typeOptions.length ? card.typeOptions : [];
+  const brandCardKey = `brand:${mode.id}:${cardIndex}`;
+  const typeCardKey = `type:${mode.id}:${cardIndex}`;
+  const orderedBrandOptions = getBottleOptionOrder(modeState, 'brand', brandOptions, brandCardKey);
+  const orderedTypeOptions = getBottleOptionOrder(modeState, 'type', typeOptions, typeCardKey);
   const selectedBrand = String(modeState.selectedBrand || '').trim();
   const selectedType = String(modeState.selectedType || '').trim();
   const correctBrand = String(card?.brand || '').trim();
   const correctType = String(card?.alcoholType || '').trim();
 
-  const brandOptionsMarkup = brandOptions.map((option) => {
+  const brandOptionsMarkup = orderedBrandOptions.map((option) => {
     const normalizedOption = String(option);
     const isSelected = selectedBrand === normalizedOption;
     const className = `answer-btn bottle-choice-btn${isSelected ? ' selected' : ''}${modeState.revealed && normalizedOption === correctBrand ? ' answer-btn-correct' : ''}${modeState.revealed && isSelected && normalizedOption !== correctBrand ? ' answer-btn-incorrect' : ''}`;
     return `<button class="${className}" type="button" data-option="${escapeAttribute(normalizedOption)}" data-group="brand">${escapeHtml(normalizedOption)}</button>`;
   }).join('');
 
-  const typeOptionsMarkup = typeOptions.map((option) => {
+  const typeOptionsMarkup = orderedTypeOptions.map((option) => {
     const normalizedOption = String(option);
     const isSelected = selectedType === normalizedOption;
     const className = `answer-btn bottle-choice-btn${isSelected ? ' selected' : ''}${modeState.revealed && normalizedOption === correctType ? ' answer-btn-correct' : ''}${modeState.revealed && isSelected && normalizedOption !== correctType ? ' answer-btn-incorrect' : ''}`;
@@ -576,7 +642,7 @@ function renderBottleRecognition(mode) {
       <div class="quiz-card bottle-card">
         <p class="quiz-counter">Bottle recognition • ${modeState.index + 1} / ${itemCount}</p>
         <div class="bottle-image-panel">
-          <img class="bottle-image" src="${escapeAttribute(card?.image || '')}" alt="Bottle image to identify" />
+          <img class="bottle-image" src="${escapeAttribute(imageSrc)}" alt="Bottle image to identify" />
         </div>
         <div class="bottle-choices">
           <div class="bottle-choice-group">
@@ -597,6 +663,45 @@ function renderBottleRecognition(mode) {
     </section>
   `;
   updateActiveModeButtons();
+}
+
+function resolveBottleRecognitionImage(card, index) {
+  const configuredImage = String(card?.image || '').trim();
+  const configuredName = getFileName(configuredImage);
+
+  if (configuredImage && configuredName.startsWith(BOTTLE_RECOGNITION_PREFIX)) {
+    return configuredImage;
+  }
+
+  if (BOTTLE_RECOGNITION_IMAGES.length) {
+    const normalizedIndex = Math.max(0, Number(index) || 0);
+    return BOTTLE_RECOGNITION_IMAGES[normalizedIndex % BOTTLE_RECOGNITION_IMAGES.length];
+  }
+
+  return configuredImage;
+}
+
+function getBottleOptionOrder(modeState, group, options, cardKey) {
+  const orderProp = group === 'brand' ? 'bottleBrandOrder' : 'bottleTypeOrder';
+  const keyProp = group === 'brand' ? 'bottleBrandOrderKey' : 'bottleTypeOrderKey';
+  const cachedOrder = Array.isArray(modeState[orderProp]) ? modeState[orderProp] : [];
+  const cachedKey = String(modeState[keyProp] || '');
+  const optionSet = new Set(options.map((option) => String(option)));
+  const hasAllOptions = cachedOrder.length === options.length && cachedOrder.every((option) => optionSet.has(String(option)));
+
+  if (!hasAllOptions || cachedKey !== cardKey) {
+    modeState[orderProp] = shuffleArray([...options]);
+    modeState[keyProp] = cardKey;
+  }
+
+  return modeState[orderProp];
+}
+
+function getFileName(filePath) {
+  const normalizedPath = String(filePath || '').trim();
+  if (!normalizedPath) return '';
+  const pathParts = normalizedPath.split('/');
+  return pathParts[pathParts.length - 1] || '';
 }
 
 function renderFlashcards(mode) {
