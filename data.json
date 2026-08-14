@@ -1067,7 +1067,7 @@
       },
       {
         "type": "bottle-recognition",
-        "image": "images/BR_wheatleyVodka.jpg",
+        "image": "images/BR_wheatley_vodka.jpg",
         "brand": "Wheatley",
         "alcoholType": "Vodka",
         "brandOptions": [

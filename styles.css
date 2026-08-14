@@ -363,6 +363,67 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   opacity: 0.9;
 }
 
+.build-drink-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.14), transparent 42%),
+    linear-gradient(145deg, color-mix(in srgb, var(--modal-bg) 88%, #20110c 12%), var(--modal-bg));
+}
+
+.build-meta {
+  font-size: 0.95rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.build-score-strip {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.build-score-strip span {
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent 35%);
+  background: rgba(0, 0, 0, 0.12);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.build-option-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.build-option-btn {
+  min-height: 58px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.build-hint {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--accent-color) 82%, #ffffff 18%);
+  padding: 8px 10px;
+  border: 1px dashed color-mix(in srgb, var(--accent-color) 55%, transparent 45%);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.build-complete-card {
+  align-items: center;
+  text-align: center;
+}
+
+.build-final-score {
+  font-size: 1.12rem;
+  font-weight: 800;
+}
+
 .mode-prompt-list {
   display: flex;
   flex-wrap: wrap;
@@ -497,6 +558,29 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   background: var(--button-hover-bg);
 }
 
+.answer-btn.selected.answer-btn-correct,
+.answer-btn.answer-btn-correct:hover {
+  border-color: #2ecc71;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95));
+  color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.25);
+}
+
+.answer-btn.selected.answer-btn-incorrect,
+.answer-btn.answer-btn-incorrect:hover {
+  border-color: #b5122a;
+  background: linear-gradient(135deg, rgba(210, 35, 60, 0.98), rgba(160, 10, 35, 0.98));
+  color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(181, 18, 42, 0.32);
+}
+
+.answer-btn.answer-btn-missed:hover {
+  border-color: #f1c40f;
+  background: linear-gradient(135deg, rgba(241, 196, 15, 0.95), rgba(243, 156, 18, 0.95));
+  color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(241, 196, 15, 0.25);
+}
+
 .answer-btn-correct {
   border-color: #2ecc71;
   background: linear-gradient(135deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95));
@@ -505,10 +589,19 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 }
 
 .answer-btn-incorrect {
-  border-color: #ff5b5b;
-  background: linear-gradient(135deg, rgba(255, 91, 91, 0.95), rgba(220, 53, 69, 0.95));
+  border-color: #b5122a;
+  background: linear-gradient(135deg, rgba(210, 35, 60, 0.98), rgba(160, 10, 35, 0.98));
   color: #ffffff;
-  box-shadow: 0 0 0 2px rgba(255, 91, 91, 0.25);
+  box-shadow: 0 0 0 2px rgba(181, 18, 42, 0.32);
+  animation: answer-incorrect-shake 240ms ease-out 1;
+}
+
+@keyframes answer-incorrect-shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
 }
 
 .answer-btn-missed {

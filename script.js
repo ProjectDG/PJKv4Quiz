@@ -12,11 +12,76 @@ const state = {
 };
 
 const BOTTLE_RECOGNITION_IMAGES = [
+  'images/BR_corazon_tequila_blanco.jpg',
+  'images/BR_rivi_gin.jpg',
   'images/BR_the_critic_cabernet.jpg',
-  'images/BR_wheatleyVodka.jpg'
+  'images/BR_wheatley_vodka.jpg'
 ];
 
 const BOTTLE_RECOGNITION_PREFIX = 'BR_';
+const BOTTLE_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif'];
+const DEFAULT_BRAND_CHOICES = ['Gran Gala', 'Wheatley', 'Rivi', 'Corazon', 'The Critic', 'Tito\'s', 'Ketel One', 'Grey Goose', 'Patron', 'Don Julio'];
+const DEFAULT_ALCOHOL_TYPE_CHOICES = [
+  'Vodka',
+  'Gin',
+  'Rum',
+  'Tequila',
+  'Whiskey',
+  'Bourbon',
+  'Scotch',
+  'Brandy',
+  'Cognac',
+  'Mezcal',
+  'Sake',
+  'Soju',
+  'Baijiu',
+  'Absinthe',
+  'Liqueur',
+  'Aperitif',
+  'Digestif',
+  'Vermouth',
+  'Amaro',
+  'Triple Sec',
+  'Cabernet Sauvignon',
+  'Pinot Noir',
+  'Merlot',
+  'Chardonnay',
+  'Sauvignon Blanc',
+  'Riesling',
+  'Ros\u00e9',
+  'Sparkling Wine'
+];
+
+const ALCOHOL_TYPE_PATTERNS = [
+  { pattern: /cabernet/, label: 'Cabernet Sauvignon' },
+  { pattern: /pinot/, label: 'Pinot Noir' },
+  { pattern: /chardonnay/, label: 'Chardonnay' },
+  { pattern: /merlot/, label: 'Merlot' },
+  { pattern: /sauvignon\s*blanc|sauvignonblanc/, label: 'Sauvignon Blanc' },
+  { pattern: /riesling/, label: 'Riesling' },
+  { pattern: /rose|ros\u00e9/, label: 'Ros\u00e9' },
+  { pattern: /sparkling/, label: 'Sparkling Wine' },
+  { pattern: /triple\s*sec|triplesec/, label: 'Triple Sec' },
+  { pattern: /amaro/, label: 'Amaro' },
+  { pattern: /vermouth/, label: 'Vermouth' },
+  { pattern: /aperitif/, label: 'Aperitif' },
+  { pattern: /digestif/, label: 'Digestif' },
+  { pattern: /liqueur|liquor/, label: 'Liqueur' },
+  { pattern: /absinthe/, label: 'Absinthe' },
+  { pattern: /baijiu/, label: 'Baijiu' },
+  { pattern: /soju/, label: 'Soju' },
+  { pattern: /sake/, label: 'Sake' },
+  { pattern: /mezcal/, label: 'Mezcal' },
+  { pattern: /cognac/, label: 'Cognac' },
+  { pattern: /brandy/, label: 'Brandy' },
+  { pattern: /scotch/, label: 'Scotch' },
+  { pattern: /bourbon/, label: 'Bourbon' },
+  { pattern: /whiskey|whisky/, label: 'Whiskey' },
+  { pattern: /tequila/, label: 'Tequila' },
+  { pattern: /rum/, label: 'Rum' },
+  { pattern: /gin/, label: 'Gin' },
+  { pattern: /vodka/, label: 'Vodka' }
+];
 
 function createModeState() {
   return {
@@ -35,7 +100,16 @@ function createModeState() {
     bottleTypeOrder: [],
     bottleTypeOrderKey: '',
     focusDrink: '',
-    showDrinkPicker: false
+    showDrinkPicker: false,
+    cardResults: {},
+    completed: false,
+    buildOrder: [],
+    buildSelectedOptions: [],
+    buildRoundRevealed: false,
+    buildRoundCorrect: null,
+    buildRoundOptions: [],
+    buildRoundKey: '',
+    buildHintUsed: false
   };
 }
 
@@ -53,6 +127,15 @@ function resetCardProgress(modeState) {
   modeState.bottleTypeOrder = [];
   modeState.bottleTypeOrderKey = '';
   modeState.revealOnly = false;
+  modeState.cardResults = {};
+  modeState.completed = false;
+  modeState.buildOrder = [];
+  modeState.buildSelectedOptions = [];
+  modeState.buildRoundRevealed = false;
+  modeState.buildRoundCorrect = null;
+  modeState.buildRoundOptions = [];
+  modeState.buildRoundKey = '';
+  modeState.buildHintUsed = false;
 }
 
 function resetModeState(modeId) {
@@ -137,6 +220,94 @@ function bindEvents() {
 
     const modeId = state.currentView;
     const modeState = state.flashcards[modeId] || createModeState();
+    const currentMode = state.modes.find((entry) => entry.id === modeId);
+
+    if (isBuildDrinkMode(currentMode)) {
+      if (button.dataset.action === 'build-toggle-option') {
+        if (modeState.buildRoundRevealed) {
+          return;
+        }
+
+        const option = String(button.dataset.buildOption || '').trim();
+        if (!option) {
+          return;
+        }
+
+        const selected = Array.isArray(modeState.buildSelectedOptions) ? [...modeState.buildSelectedOptions] : [];
+        const existingIndex = selected.indexOf(option);
+        if (existingIndex >= 0) {
+          selected.splice(existingIndex, 1);
+        } else {
+          selected.push(option);
+        }
+
+        modeState.buildSelectedOptions = selected;
+        modeState.buildRoundCorrect = null;
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      if (button.dataset.action === 'build-check') {
+        scoreBuildDrinkRound(currentMode, modeState);
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      if (button.dataset.action === 'build-next') {
+        const context = getBuildDrinkRoundContext(currentMode, modeState);
+        if (!context) {
+          return;
+        }
+
+        if (!modeState.buildRoundRevealed) {
+          scoreBuildDrinkRound(currentMode, modeState);
+          state.flashcards[modeId] = modeState;
+          renderView();
+          return;
+        }
+
+        const isLastRound = context.itemCount > 0 && modeState.index >= context.itemCount - 1;
+        if (isLastRound) {
+          modeState.completed = true;
+          state.flashcards[modeId] = modeState;
+          renderView();
+          return;
+        }
+
+        modeState.index = Math.min(Math.max(context.itemCount - 1, 0), modeState.index + 1);
+        modeState.buildSelectedOptions = [];
+        modeState.buildRoundRevealed = false;
+        modeState.buildRoundCorrect = null;
+        modeState.buildRoundOptions = [];
+        modeState.buildRoundKey = '';
+        modeState.buildHintUsed = false;
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      if (button.dataset.action === 'build-prev') {
+        modeState.index = Math.max(0, modeState.index - 1);
+        modeState.buildSelectedOptions = [];
+        modeState.buildRoundRevealed = false;
+        modeState.buildRoundCorrect = null;
+        modeState.buildRoundOptions = [];
+        modeState.buildRoundKey = '';
+        modeState.buildHintUsed = false;
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      if (button.dataset.action === 'build-hint') {
+        modeState.buildHintUsed = true;
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+    }
 
     if (button.dataset.action === 'toggle-drink-picker') {
       modeState.showDrinkPicker = !modeState.showDrinkPicker;
@@ -172,6 +343,18 @@ function bindEvents() {
       return;
     }
 
+    if (button.dataset.action === 'restart-mode') {
+      resetModeState(modeId);
+      renderView();
+      return;
+    }
+
+    if (button.dataset.action === 'menu') {
+      state.currentView = 'menu';
+      renderView();
+      return;
+    }
+
     if (button.dataset.action === 'prev') {
       modeState.index = Math.max(0, modeState.index - 1);
       modeState.revealed = false;
@@ -190,6 +373,7 @@ function bindEvents() {
     if (button.dataset.action === 'next') {
       const mode = state.modes.find((entry) => entry.id === modeId);
       const cardOrder = mode ? getOrBuildCardOrder(mode, modeState) : [];
+      const itemCount = cardOrder.length;
       const cardIndex = cardOrder[modeState.index] ?? modeState.index;
       const card = mode && Array.isArray(mode.items) ? mode.items[cardIndex] : null;
 
@@ -201,16 +385,19 @@ function bindEvents() {
           const typeSubmitted = String(modeState.selectedType || '').trim().toLowerCase();
           modeState.revealed = true;
           modeState.answerCorrect = brandSubmitted === brandCorrect && typeSubmitted === typeCorrect;
+          setCardResult(modeState, cardIndex, modeState.answerCorrect);
         } else if (isMultipleChoiceCard(card)) {
           const expected = getCorrectAnswers(card);
           const submitted = Array.isArray(modeState.selectedOptions) ? modeState.selectedOptions : [];
           modeState.revealed = true;
           modeState.answerCorrect = isSelectionCorrect(submitted, expected);
+          setCardResult(modeState, cardIndex, modeState.answerCorrect);
         } else {
           const expected = String(card?.answer || '').trim().toLowerCase();
           const submitted = String(modeState.inputValue || '').trim().toLowerCase();
           modeState.revealed = true;
           modeState.answerCorrect = submitted === expected;
+          setCardResult(modeState, cardIndex, modeState.answerCorrect);
         }
 
         modeState.revealOnly = false;
@@ -219,7 +406,14 @@ function bindEvents() {
         return;
       }
 
-      const itemCount = cardOrder.length;
+      const isLastCard = itemCount > 0 && modeState.index >= itemCount - 1;
+      if (isLastCard) {
+        modeState.completed = true;
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
       modeState.index = Math.min(Math.max(itemCount - 1, 0), modeState.index + 1);
       modeState.revealed = false;
       modeState.selectedOptions = [];
@@ -246,6 +440,7 @@ function bindEvents() {
         const typeSubmitted = String(modeState.selectedType || '').trim().toLowerCase();
         modeState.revealed = true;
         modeState.answerCorrect = brandSubmitted === brandCorrect && typeSubmitted === typeCorrect;
+        setCardResult(modeState, cardIndex, modeState.answerCorrect);
         modeState.revealOnly = false;
         state.flashcards[modeId] = modeState;
         renderView();
@@ -257,6 +452,7 @@ function bindEvents() {
         const submitted = Array.isArray(modeState.selectedOptions) ? modeState.selectedOptions : [];
         modeState.revealed = true;
         modeState.answerCorrect = isSelectionCorrect(submitted, expected);
+        setCardResult(modeState, cardIndex, modeState.answerCorrect);
         modeState.revealOnly = false;
         state.flashcards[modeId] = modeState;
         renderView();
@@ -267,6 +463,7 @@ function bindEvents() {
       const submitted = String(modeState.inputValue || '').trim().toLowerCase();
       modeState.revealed = true;
       modeState.answerCorrect = submitted === expected;
+      setCardResult(modeState, cardIndex, modeState.answerCorrect);
       modeState.revealOnly = false;
       state.flashcards[modeId] = modeState;
       renderView();
@@ -274,9 +471,13 @@ function bindEvents() {
     }
 
     if (button.dataset.action === 'reveal') {
+      const mode = state.modes.find((entry) => entry.id === modeId);
+      const cardOrder = mode ? getOrBuildCardOrder(mode, modeState) : [];
+      const cardIndex = cardOrder[modeState.index] ?? modeState.index;
       modeState.revealed = true;
       modeState.answerCorrect = null;
       modeState.revealOnly = true;
+      setCardResult(modeState, cardIndex, false);
       state.flashcards[modeId] = modeState;
       renderView();
       return;
@@ -370,11 +571,260 @@ async function loadModes() {
     const response = await fetch('./data.json');
     if (!response.ok) throw new Error('Unable to load data.json');
     const payload = await response.json();
-    state.modes = normalizeModes(payload);
+    const normalizedModes = normalizeModes(payload);
+    const bottleImages = await discoverBottleRecognitionImages(normalizedModes);
+    state.modes = applyBottleRecognitionImagePool(normalizedModes, bottleImages);
   } catch (error) {
     console.warn('Using fallback quiz data:', error);
-    state.modes = normalizeModes(getFallbackModes());
+    const normalizedModes = normalizeModes(getFallbackModes());
+    const bottleImages = await discoverBottleRecognitionImages(normalizedModes);
+    state.modes = applyBottleRecognitionImagePool(normalizedModes, bottleImages);
   }
+}
+
+async function discoverBottleRecognitionImages(modes = []) {
+  const discovered = [];
+
+  try {
+    const response = await fetch('./images/');
+    if (response.ok) {
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const links = Array.from(doc.querySelectorAll('a[href]'));
+
+      links.forEach((link) => {
+        const href = String(link.getAttribute('href') || '').trim();
+        const fileName = getFileName(href);
+        if (!fileName) return;
+        if (!fileName.startsWith(BOTTLE_RECOGNITION_PREFIX)) return;
+        if (!isBottleImageFile(fileName)) return;
+        discovered.push(`images/${fileName}`);
+      });
+    }
+  } catch (error) {
+    // Ignore directory-listing failures and keep fallback sources.
+  }
+
+  const imagesFromModeData = collectBottleRecognitionImagesFromModes(modes);
+  const merged = [...discovered, ...imagesFromModeData, ...BOTTLE_RECOGNITION_IMAGES];
+
+  return Array.from(new Set(merged.map((imagePath) => normalizeImagePath(imagePath)).filter(Boolean)));
+}
+
+function isBottleImageFile(fileName) {
+  const lowerName = String(fileName || '').trim().toLowerCase();
+  return BOTTLE_IMAGE_EXTENSIONS.some((extension) => lowerName.endsWith(extension));
+}
+
+function normalizeImagePath(filePath) {
+  const normalized = String(filePath || '').trim();
+  if (!normalized) return '';
+
+  if (normalized.startsWith('./')) {
+    return normalizeImagePath(normalized.slice(2));
+  }
+
+  const fileName = getFileName(normalized);
+  if (!fileName) return '';
+
+  return normalized.startsWith('images/') ? normalized : `images/${fileName}`;
+}
+
+function collectBottleRecognitionImagesFromModes(modes = []) {
+  return (Array.isArray(modes) ? modes : [])
+    .filter((mode) => mode?.type === 'bottle-recognition')
+    .flatMap((mode) => Array.isArray(mode.items) ? mode.items : [])
+    .map((item) => normalizeImagePath(item?.image || ''))
+    .filter((imagePath) => {
+      const fileName = getFileName(imagePath);
+      return Boolean(fileName && fileName.startsWith(BOTTLE_RECOGNITION_PREFIX) && isBottleImageFile(fileName));
+    });
+}
+
+function applyBottleRecognitionImagePool(modes, imagePool) {
+  const normalizedPool = Array.from(new Set((Array.isArray(imagePool) ? imagePool : []).map((path) => normalizeImagePath(path)).filter(Boolean)));
+
+  if (!normalizedPool.length) {
+    return modes;
+  }
+
+  return modes.map((mode) => {
+    if (mode?.type !== 'bottle-recognition') {
+      return mode;
+    }
+
+    const existingItems = Array.isArray(mode.items) ? mode.items : [];
+    const itemsByImageName = new Map();
+    const itemsByImageKey = new Map();
+    existingItems.forEach((item) => {
+      const imageName = getFileName(normalizeImagePath(item?.image || ''));
+      const imageKey = getBottleImageMatchKey(imageName);
+      if (imageName) {
+        itemsByImageName.set(imageName, item);
+      }
+      if (imageKey) {
+        itemsByImageKey.set(imageKey, item);
+      }
+    });
+
+    const knownBrands = existingItems.map((item) => sanitizeBrandName(item?.brand)).filter(Boolean);
+    const knownTypes = existingItems.map((item) => normalizeAlcoholType(item?.alcoholType)).filter(Boolean);
+
+    const nextItems = normalizedPool.map((imagePath) => {
+      const imageName = getFileName(imagePath);
+      const imageKey = getBottleImageMatchKey(imageName);
+      const existing = itemsByImageName.get(imageName) || itemsByImageKey.get(imageKey);
+      if (existing) {
+        const normalizedBrand = sanitizeBrandName(existing.brand);
+        const normalizedType = normalizeAlcoholType(existing.alcoholType);
+        return {
+          ...existing,
+          image: imagePath,
+          brand: normalizedBrand,
+          alcoholType: normalizedType,
+          brandOptions: buildBrandOptions(normalizedBrand, existing.brandOptions, knownBrands),
+          typeOptions: buildAlcoholTypeOptions(normalizedType, existing.typeOptions, [...knownTypes, ...DEFAULT_ALCOHOL_TYPE_CHOICES])
+        };
+      }
+
+      return buildBottleRecognitionItemFromImage(imagePath, knownBrands, knownTypes);
+    });
+
+    return {
+      ...mode,
+      items: nextItems
+    };
+  });
+}
+
+function getBottleImageMatchKey(fileName) {
+  return String(fileName || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\.[^.]+$/, '')
+    .replace(new RegExp(`^${BOTTLE_RECOGNITION_PREFIX.toLowerCase()}`), '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function buildBottleRecognitionItemFromImage(imagePath, knownBrands = [], knownTypes = []) {
+  const imageName = getFileName(imagePath);
+  const inferredBrand = inferBottleBrandFromFileName(imageName);
+  const inferredType = inferBottleTypeFromFileName(imageName);
+
+  return {
+    type: 'bottle-recognition',
+    question: 'Identify the bottle',
+    image: imagePath,
+    brand: inferredBrand,
+    alcoholType: inferredType,
+    brandOptions: buildBrandOptions(inferredBrand, knownBrands, DEFAULT_BRAND_CHOICES),
+    typeOptions: buildAlcoholTypeOptions(inferredType, knownTypes, DEFAULT_ALCOHOL_TYPE_CHOICES)
+  };
+}
+
+function inferBottleBrandFromFileName(fileName) {
+  const clean = String(fileName || '').trim()
+    .replace(/\.[^.]+$/, '')
+    .replace(new RegExp(`^${BOTTLE_RECOGNITION_PREFIX}`), '')
+    .replace(/[_-]+/g, ' ')
+    .trim();
+
+  if (!clean) return 'Unknown Brand';
+
+  return sanitizeBrandName(clean);
+}
+
+function inferBottleTypeFromFileName(fileName) {
+  return normalizeAlcoholType(fileName) || 'Unknown';
+}
+
+function buildBrandOptions(correctValue, knownValues = [], fallbackValues = []) {
+  const normalizedCorrect = sanitizeBrandName(correctValue) || 'Unknown Brand';
+  const merged = [normalizedCorrect, ...knownValues, ...fallbackValues]
+    .map((value) => sanitizeBrandName(value))
+    .filter(Boolean);
+
+  return ensureSixChoices(merged, ['Unknown Brand']);
+}
+
+function buildAlcoholTypeOptions(correctValue, knownValues = [], fallbackValues = []) {
+  const normalizedCorrect = normalizeAlcoholType(correctValue) || 'Unknown';
+  const merged = [normalizedCorrect, ...knownValues, ...fallbackValues]
+    .map((value) => normalizeAlcoholType(value))
+    .filter(Boolean);
+
+  const unique = Array.from(new Set(merged));
+  const distractors = unique.filter((value) => value !== normalizedCorrect);
+  const randomizedDistractors = shuffleArray(distractors).slice(0, 5);
+  const combined = shuffleArray([normalizedCorrect, ...randomizedDistractors]);
+
+  if (combined.length < 6) {
+    return ensureSixChoices(combined, ['Unknown']);
+  }
+
+  return combined.slice(0, 6);
+}
+
+function ensureSixChoices(values, fillers = []) {
+  const unique = Array.from(new Set(values.map((value) => String(value || '').trim()).filter(Boolean)));
+
+  for (const filler of fillers) {
+    if (unique.length >= 6) break;
+    if (!unique.includes(filler)) unique.push(filler);
+  }
+
+  while (unique.length < 6) {
+    unique.push(`Choice ${unique.length + 1}`);
+  }
+
+  return unique.slice(0, 6);
+}
+
+function sanitizeBrandName(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+
+  const descriptorWords = new Set([
+    'vodka', 'gin', 'tequila', 'rum', 'whiskey', 'whisky', 'bourbon', 'scotch',
+    'cabernet', 'sauvignon', 'pinot', 'noir', 'chardonnay', 'rose', 'rosé',
+    'liqueur', 'liquor', 'blanco', 'reposado', 'anejo', 'añejo', 'silver', 'gold',
+    'spiced', 'flavored', 'flavoured', 'extra', 'dry', 'orange'
+  ]);
+
+  const filteredWords = raw
+    .replace(/[_-]+/g, ' ')
+    .split(/\s+/)
+    .filter((word) => word)
+    .filter((word) => !descriptorWords.has(word.toLowerCase()));
+
+  const sourceWords = filteredWords.length ? filteredWords : raw.split(/\s+/).filter(Boolean);
+
+  return sourceWords
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+    .trim();
+}
+
+function normalizeAlcoholType(value) {
+  const text = String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, ' ');
+  if (!text) return '';
+
+  for (const entry of ALCOHOL_TYPE_PATTERNS) {
+    if (entry.pattern.test(text)) {
+      return entry.label;
+    }
+  }
+
+  return text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+    .trim();
 }
 
 function getFallbackModes() {
@@ -516,6 +966,11 @@ function renderView() {
     return;
   }
 
+  if (isBuildDrinkMode(mode)) {
+    renderBuildDrink(mode);
+    return;
+  }
+
   if (mode.type === 'bottle-recognition') {
     renderBottleRecognition(mode);
     return;
@@ -601,8 +1056,14 @@ function renderBottleRecognition(mode) {
   const modeState = state.flashcards[mode.id] || createModeState();
   state.flashcards[mode.id] = modeState;
 
-  const cardOrder = Array.isArray(mode.items) ? mode.items.map((_, index) => index) : [];
+  const cardOrder = getOrBuildCardOrder(mode, modeState);
   const itemCount = cardOrder.length;
+
+  if (modeState.completed) {
+    renderModeCompletion(mode, modeState, itemCount);
+    return;
+  }
+
   if (modeState.index > Math.max(itemCount - 1, 0)) {
     modeState.index = Math.max(itemCount - 1, 0);
   }
@@ -640,7 +1101,8 @@ function renderBottleRecognition(mode) {
     ? `<p class="feedback ${modeState.answerCorrect ? 'correct' : 'incorrect'}">${modeState.answerCorrect ? 'Nice work — you identified both the brand and the alcohol type.' : `Not quite — the brand was ${escapeHtml(correctBrand || 'unknown')} and the alcohol type was ${escapeHtml(correctType || 'unknown')}.`}</p>`
     : '';
 
-  const nextButtonLabel = modeState.revealed ? 'Next' : 'Check';
+  const isLastCard = itemCount > 0 && modeState.index >= itemCount - 1;
+  const nextButtonLabel = modeState.revealed ? (isLastCard ? 'Finish' : 'Next') : 'Check';
 
   mainContainer.innerHTML = `
     <section class="quiz-view">
@@ -671,6 +1133,297 @@ function renderBottleRecognition(mode) {
       </div>
     </section>
   `;
+  updateActiveModeButtons();
+}
+
+function isBuildDrinkMode(mode) {
+  return Boolean(mode && (mode.id === 'builddrink' || mode.type === 'build-drink'));
+}
+
+function getBuildDrinkRecipes(mode) {
+  const directRecipes = (Array.isArray(mode?.items) ? mode.items : [])
+    .map((item) => {
+      if (!item || typeof item !== 'object') return null;
+      const drinkName = String(item.drinkName || item.name || '').trim();
+      const ingredients = Array.isArray(item.ingredients)
+        ? item.ingredients.map((entry) => cleanIngredientAnswer(entry)).filter(Boolean)
+        : [];
+
+      if (!drinkName || !ingredients.length) {
+        return null;
+      }
+
+      return {
+        drinkName,
+        ingredients: Array.from(new Set(ingredients))
+      };
+    })
+    .filter(Boolean);
+
+  if (directRecipes.length) {
+    return directRecipes;
+  }
+
+  const flashcardMode = state.modes.find((entry) => entry.id === 'flashcards' || entry.type === 'flashcards');
+  const recipes = [];
+  const sourceItems = Array.isArray(flashcardMode?.items) ? flashcardMode.items : [];
+
+  sourceItems.forEach((item) => {
+    const questionText = String(item?.question || '');
+    const match = questionText.match(/^Which ingredients come in (.+)\? \(Select all that apply\)$/);
+    if (!match) {
+      return;
+    }
+
+    const drinkName = String(match[1] || '').trim();
+    const ingredients = getCorrectAnswers(item)
+      .map((entry) => cleanIngredientAnswer(entry))
+      .filter(Boolean);
+
+    if (!drinkName || !ingredients.length) {
+      return;
+    }
+
+    if (recipes.some((recipe) => recipe.drinkName === drinkName)) {
+      return;
+    }
+
+    recipes.push({
+      drinkName,
+      ingredients: Array.from(new Set(ingredients))
+    });
+  });
+
+  return recipes;
+}
+
+function getOrBuildBuildDrinkOrder(modeState, itemCount) {
+  if (!itemCount) {
+    modeState.buildOrder = [];
+    return modeState.buildOrder;
+  }
+
+  const hasValidOrder = Array.isArray(modeState.buildOrder)
+    && modeState.buildOrder.length === itemCount
+    && new Set(modeState.buildOrder).size === itemCount
+    && modeState.buildOrder.every((index) => Number.isInteger(index) && index >= 0 && index < itemCount);
+
+  if (!hasValidOrder) {
+    modeState.buildOrder = shuffleArray(Array.from({ length: itemCount }, (_, index) => index));
+  }
+
+  return modeState.buildOrder;
+}
+
+function getBuildDrinkRoundContext(mode, modeState) {
+  const recipes = getBuildDrinkRecipes(mode);
+  const itemCount = recipes.length;
+  const order = getOrBuildBuildDrinkOrder(modeState, itemCount);
+
+  if (!itemCount) {
+    return null;
+  }
+
+  if (modeState.index > Math.max(itemCount - 1, 0)) {
+    modeState.index = Math.max(itemCount - 1, 0);
+  }
+
+  const recipeIndex = order[modeState.index] ?? modeState.index;
+  const recipe = recipes[recipeIndex] || recipes[0];
+  if (!recipe) {
+    return null;
+  }
+
+  return {
+    recipes,
+    itemCount,
+    recipeIndex,
+    recipe
+  };
+}
+
+function getOrBuildBuildDrinkRoundOptions(modeState, recipe, recipes, recipeIndex) {
+  const correctIngredients = Array.isArray(recipe?.ingredients)
+    ? recipe.ingredients.map((entry) => String(entry || '').trim()).filter(Boolean)
+    : [];
+  const key = `${recipeIndex}:${correctIngredients.join('|')}`;
+  const cached = Array.isArray(modeState.buildRoundOptions) ? modeState.buildRoundOptions : [];
+
+  const hasValidCache = modeState.buildRoundKey === key
+    && cached.length >= correctIngredients.length
+    && correctIngredients.every((ingredient) => cached.includes(ingredient));
+
+  if (hasValidCache) {
+    return cached;
+  }
+
+  const allIngredients = Array.from(new Set(
+    (Array.isArray(recipes) ? recipes : [])
+      .flatMap((entry) => Array.isArray(entry.ingredients) ? entry.ingredients : [])
+      .map((entry) => String(entry || '').trim())
+      .filter(Boolean)
+  ));
+  const distractorPool = allIngredients.filter((ingredient) => !correctIngredients.includes(ingredient));
+  const desiredCount = Math.max(8, correctIngredients.length + 3);
+  const distractorCount = Math.max(0, desiredCount - correctIngredients.length);
+  const distractors = shuffleArray(distractorPool).slice(0, distractorCount);
+
+  modeState.buildRoundOptions = shuffleArray(Array.from(new Set([...correctIngredients, ...distractors])));
+  modeState.buildRoundKey = key;
+  return modeState.buildRoundOptions;
+}
+
+function getBuildDrinkHintText(recipe, selectedOptions) {
+  const expected = Array.isArray(recipe?.ingredients) ? recipe.ingredients : [];
+  const selected = Array.isArray(selectedOptions) ? selectedOptions : [];
+  const missing = expected.filter((ingredient) => !selected.includes(ingredient));
+
+  if (!missing.length) {
+    return 'Hint: You already selected all required ingredients. Check your extras.';
+  }
+
+  const suggestion = missing[0];
+  const firstChar = suggestion.charAt(0).toUpperCase();
+  return `Hint: one missing ingredient starts with "${firstChar}".`;
+}
+
+function scoreBuildDrinkRound(mode, modeState) {
+  const context = getBuildDrinkRoundContext(mode, modeState);
+  if (!context) {
+    return;
+  }
+
+  const expected = Array.isArray(context.recipe.ingredients) ? context.recipe.ingredients : [];
+  const submitted = Array.isArray(modeState.buildSelectedOptions) ? modeState.buildSelectedOptions : [];
+  const isCorrect = isSelectionCorrect(submitted, expected);
+
+  modeState.buildRoundRevealed = true;
+  modeState.buildRoundCorrect = isCorrect;
+  setCardResult(modeState, context.recipeIndex, isCorrect);
+}
+
+function renderBuildDrink(mode) {
+  const modeState = state.flashcards[mode.id] || createModeState();
+  state.flashcards[mode.id] = modeState;
+
+  const context = getBuildDrinkRoundContext(mode, modeState);
+  if (!context) {
+    mainContainer.innerHTML = `
+      <section class="quiz-view">
+        <div class="quiz-header">
+          <button class="back-btn" type="button" data-action="back">Back</button>
+          <h2>${escapeHtml(mode.label)}</h2>
+        </div>
+        <div class="quiz-card placeholder-card">
+          <p class="quiz-counter">Build a drink</p>
+          <h3>No recipes found yet.</h3>
+          <p class="placeholder-copy">Add ingredient cards in Flash Cards and this mode will auto-build rounds from them.</p>
+        </div>
+      </section>
+    `;
+    updateActiveModeButtons();
+    return;
+  }
+
+  if (modeState.completed) {
+    renderBuildDrinkCompletion(mode, modeState, context.itemCount);
+    return;
+  }
+
+  const { recipes, recipe, recipeIndex, itemCount } = context;
+  const roundOptions = getOrBuildBuildDrinkRoundOptions(modeState, recipe, recipes, recipeIndex);
+  const selectedOptions = Array.isArray(modeState.buildSelectedOptions) ? modeState.buildSelectedOptions : [];
+  const expected = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+  const isLastRound = modeState.index >= itemCount - 1;
+
+  const optionMarkup = roundOptions.map((option) => {
+    const normalizedOption = String(option || '').trim();
+    const isSelected = selectedOptions.includes(normalizedOption);
+    const isCorrectIngredient = expected.includes(normalizedOption);
+
+    let className = `answer-btn build-option-btn${isSelected ? ' selected' : ''}`;
+    if (modeState.buildRoundRevealed) {
+      if (isSelected && isCorrectIngredient) {
+        className += ' answer-btn-correct';
+      } else if (isSelected && !isCorrectIngredient) {
+        className += ' answer-btn-incorrect';
+      } else if (!isSelected && isCorrectIngredient) {
+        className += ' answer-btn-missed';
+      }
+    }
+
+    return `
+      <button class="${className}" type="button" data-action="build-toggle-option" data-build-option="${escapeAttribute(normalizedOption)}">
+        ${escapeHtml(normalizedOption)}
+      </button>
+    `;
+  }).join('');
+
+  const feedbackMarkup = modeState.buildRoundRevealed
+    ? `<p class="feedback ${modeState.buildRoundCorrect ? 'correct' : 'incorrect'}">${modeState.buildRoundCorrect ? 'Perfect pour. That build is correct.' : `Close, but not quite. Correct ingredients: ${escapeHtml(expected.join(', '))}.`}</p>`
+    : '';
+  const hintMarkup = modeState.buildHintUsed && !modeState.buildRoundRevealed
+    ? `<p class="build-hint">${escapeHtml(getBuildDrinkHintText(recipe, selectedOptions))}</p>`
+    : '';
+
+  mainContainer.innerHTML = `
+    <section class="quiz-view">
+      <div class="quiz-header">
+        <button class="back-btn" type="button" data-action="back">Back</button>
+        <h2>${escapeHtml(mode.label)}</h2>
+      </div>
+      <div class="quiz-card build-drink-card">
+        <p class="quiz-counter">Round ${modeState.index + 1} / ${itemCount}</p>
+        <h3>Build: ${escapeHtml(recipe.drinkName)}</h3>
+        <p class="build-meta">Pick exactly ${expected.length} ingredient${expected.length === 1 ? '' : 's'}.</p>
+        <div class="build-score-strip">
+          <span>Selected: ${selectedOptions.length}</span>
+          <span>Target: ${expected.length}</span>
+        </div>
+        <div class="answer-list build-option-grid">
+          ${optionMarkup}
+        </div>
+        ${hintMarkup}
+        ${feedbackMarkup}
+      </div>
+      <div class="quiz-actions">
+        <button class="action-btn" type="button" data-action="build-prev">Previous</button>
+        <button class="action-btn" type="button" data-action="build-hint">Hint</button>
+        <button class="action-btn" type="button" data-action="build-check">Check</button>
+        <button class="action-btn" type="button" data-action="build-next">${modeState.buildRoundRevealed ? (isLastRound ? 'Finish' : 'Next Round') : 'Lock In'}</button>
+      </div>
+    </section>
+  `;
+
+  updateActiveModeButtons();
+}
+
+function renderBuildDrinkCompletion(mode, modeState, itemCount) {
+  const score = getModeScore(modeState, itemCount);
+  const headline = score.percent >= 90
+    ? 'Bartender mode: unlocked.'
+    : score.percent >= 70
+      ? 'Solid run. You are getting sharp.'
+      : 'Good practice set. Run it back.';
+
+  mainContainer.innerHTML = `
+    <section class="quiz-view">
+      <div class="quiz-header">
+        <button class="back-btn" type="button" data-action="back">Back</button>
+        <h2>${escapeHtml(mode.label)}</h2>
+      </div>
+      <div class="quiz-card build-drink-card build-complete-card">
+        <p class="quiz-counter">Service rush complete</p>
+        <h3>${escapeHtml(headline)}</h3>
+        <p class="build-final-score">Score: ${score.correct} / ${score.total} (${score.percent}%)</p>
+      </div>
+      <div class="quiz-actions">
+        <button class="action-btn" type="button" data-action="restart-mode">Start Over</button>
+        <button class="action-btn" type="button" data-action="menu">Back to Main Menu</button>
+      </div>
+    </section>
+  `;
+
   updateActiveModeButtons();
 }
 
@@ -725,6 +1478,12 @@ function renderFlashcards(mode) {
 
   const cardOrder = getOrBuildCardOrder(mode, modeState);
   const itemCount = cardOrder.length;
+
+  if (modeState.completed) {
+    renderModeCompletion(mode, modeState, itemCount);
+    return;
+  }
+
   if (modeState.index > Math.max(itemCount - 1, 0)) {
     modeState.index = Math.max(itemCount - 1, 0);
   }
@@ -818,7 +1577,8 @@ function renderFlashcards(mode) {
         </div>
       `;
 
-  const nextButtonLabel = modeState.revealed ? 'Next' : 'Check';
+  const isLastCard = itemCount > 0 && modeState.index >= itemCount - 1;
+  const nextButtonLabel = modeState.revealed ? (isLastCard ? 'Finish' : 'Next') : 'Check';
   const drinkPickerButtonLabel = modeState.focusDrink ? `Drink: ${modeState.focusDrink}` : 'Choose Drink';
 
   const drinkPickerModalMarkup = hasDrinkPicker
@@ -941,6 +1701,51 @@ function buildFeedbackText(card, selectedOptions) {
   return `Not quite — the correct answer${correctAnswers.length > 1 ? 's are' : ' is'} ${correctAnswers.join(', ')}.`;
 }
 
+function setCardResult(modeState, cardIndex, isCorrect) {
+  if (!modeState || !Number.isInteger(cardIndex) || cardIndex < 0) {
+    return;
+  }
+
+  if (!modeState.cardResults || typeof modeState.cardResults !== 'object') {
+    modeState.cardResults = {};
+  }
+
+  modeState.cardResults[String(cardIndex)] = Boolean(isCorrect);
+}
+
+function getModeScore(modeState, itemCount) {
+  const results = modeState && typeof modeState.cardResults === 'object' ? modeState.cardResults : {};
+  const correct = Object.values(results).filter(Boolean).length;
+  const total = Math.max(0, Number(itemCount) || 0);
+  const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  return { correct, total, percent };
+}
+
+function renderModeCompletion(mode, modeState, itemCount) {
+  const score = getModeScore(modeState, itemCount);
+
+  mainContainer.innerHTML = `
+    <section class="quiz-view">
+      <div class="quiz-header">
+        <button class="back-btn" type="button" data-action="back">Back</button>
+        <h2>${escapeHtml(mode.label)}</h2>
+      </div>
+      <div class="quiz-card">
+        <p class="quiz-counter">Section complete</p>
+        <h3>Your score: ${score.correct} / ${score.total}</h3>
+        <p class="feedback ${score.percent >= 70 ? 'correct' : 'incorrect'}">${score.percent}% correct</p>
+      </div>
+      <div class="quiz-actions">
+        <button class="action-btn" type="button" data-action="restart-mode">Start Over</button>
+        <button class="action-btn" type="button" data-action="menu">Back to Main Menu</button>
+      </div>
+    </section>
+  `;
+
+  updateActiveModeButtons();
+}
+
 function getOrBuildCardOrder(mode, modeState) {
   const itemCount = Array.isArray(mode?.items) ? mode.items.length : 0;
   if (!itemCount) {
@@ -954,7 +1759,9 @@ function getOrBuildCardOrder(mode, modeState) {
     && modeState.cardOrder.every((index) => Number.isInteger(index) && index >= 0 && index < itemCount);
 
   if (!hasValidOrder) {
-    modeState.cardOrder = buildDrinkGroupedCardOrder(mode.items, modeState.focusDrink);
+    modeState.cardOrder = mode?.type === 'bottle-recognition'
+      ? shuffleArray(Array.from({ length: itemCount }, (_, index) => index))
+      : buildDrinkGroupedCardOrder(mode.items, modeState.focusDrink);
   }
 
   return modeState.cardOrder;
