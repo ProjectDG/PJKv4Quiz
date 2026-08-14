@@ -317,6 +317,13 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   gap: 12px;
 }
 
+.quiz-view .quiz-header h2 {
+  flex: 1 1 auto;
+  text-align: center;
+  margin: 0 auto;
+  padding: 0 8px;
+}
+
 .drink-picker-btn {
   max-width: 190px;
   white-space: nowrap;

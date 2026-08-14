@@ -29,6 +29,30 @@
       },
       {
         "type": "multiple-choice",
+        "question": "Which glass does Call Me 'Koko' go in?",
+        "answers": [
+          "Rocks Glass",
+          "Martini Glass",
+          "Collins Glass",
+          "Coupe Glass"
+        ],
+        "correct-answers": [
+          "Rocks Glass"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Is Call Me 'Koko' shaken or stirred?",
+        "answers": [
+          "Shaken",
+          "Stirred"
+        ],
+        "correct-answers": [
+          "Shaken"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "How much Rivi Gin goes in Call Me 'Koko'?",
         "answers": [
           "1.5 oz",
@@ -127,6 +151,30 @@
       },
       {
         "type": "multiple-choice",
+        "question": "Which glass does Give Me Park Avenue go in?",
+        "answers": [
+          "Rocks Glass",
+          "Martini Glass",
+          "Coupe Glass",
+          "Collins Glass"
+        ],
+        "correct-answers": [
+          "Rocks Glass"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Is Give Me Park Avenue shaken or stirred?",
+        "answers": [
+          "Shaken",
+          "Stirred"
+        ],
+        "correct-answers": [
+          "Stirred"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "How much Sazerac Rye goes in Give Me Park Avenue?",
         "answers": [
           "2 oz",
@@ -176,13 +224,12 @@
           "Chili"
         ],
         "correct-answers": [
-          "Cherry",
-          "Orange Twist"
+          "Cherry"
         ]
       },
       {
         "type": "multiple-choice",
-        "question": "Which ingredients come in Olive Your Dirty? (Select all that apply)",
+        "question": "Which ingredients come in Olive You Dirty? (Select all that apply)",
         "answers": [
           "Vodka or Gin - 2.5 oz",
           "Dry Vermouth - .5 oz",
@@ -196,6 +243,30 @@
           "Vodka or Gin - 2.5 oz",
           "Dry Vermouth - .5 oz",
           "Olive Brine - 1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which glass does Olive Your Dirty go in?",
+        "answers": [
+          "Martini Glass",
+          "Rocks Glass",
+          "Collins Glass",
+          "Coupe Glass"
+        ],
+        "correct-answers": [
+          "Martini Glass"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Is Olive Your Dirty shaken or stirred?",
+        "answers": [
+          "Shaken",
+          "Stirred"
+        ],
+        "correct-answers": [
+          "Stirred"
         ]
       },
       {
@@ -271,6 +342,30 @@
       },
       {
         "type": "multiple-choice",
+        "question": "Which glass does Mary Not Martha go in?",
+        "answers": [
+          "Martini Glass",
+          "Rocks Glass",
+          "Collins Glass",
+          "Coupe Glass"
+        ],
+        "correct-answers": [
+          "Martini Glass"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Is Mary Not Martha shaken or stirred?",
+        "answers": [
+          "Shaken",
+          "Stirred"
+        ],
+        "correct-answers": [
+          "Shaken"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "How much Vodka goes in Mary Not Martha?",
         "answers": [
           "2 oz",
@@ -328,6 +423,30 @@
           "Gin - 1 oz",
           "Campari - 1 oz",
           "Sweet Vermouth - 1 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which glass does Negroni go in?",
+        "answers": [
+          "Rocks Glass",
+          "Martini Glass",
+          "Collins Glass",
+          "Coupe Glass"
+        ],
+        "correct-answers": [
+          "Rocks Glass"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Is Negroni shaken or stirred?",
+        "answers": [
+          "Shaken",
+          "Stirred"
+        ],
+        "correct-answers": [
+          "Stirred"
         ]
       },
       {
@@ -404,6 +523,30 @@
       },
       {
         "type": "multiple-choice",
+        "question": "Which glass does Pink Horizon go in?",
+        "answers": [
+          "Collins Glass",
+          "Rocks Glass",
+          "Martini Glass",
+          "Coupe Glass"
+        ],
+        "correct-answers": [
+          "Collins Glass"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Is Pink Horizon shaken or stirred?",
+        "answers": [
+          "Shaken",
+          "Stirred"
+        ],
+        "correct-answers": [
+          "Shaken"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "How much Corazon Blanco goes in Pink Horizon?",
         "answers": [
           "2 oz",
@@ -475,6 +618,30 @@
           "Butterfly Pea Flower Syrup - .5 oz",
           "Lime Juice - 1 oz",
           "Pineapple Juice - .5 oz"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which glass does Spicy T & M go in?",
+        "answers": [
+          "Rocks Glass",
+          "Martini Glass",
+          "Collins Glass",
+          "Coupe Glass"
+        ],
+        "correct-answers": [
+          "Rocks Glass"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Is Spicy T & M shaken or stirred?",
+        "answers": [
+          "Shaken",
+          "Stirred"
+        ],
+        "correct-answers": [
+          "Shaken"
         ]
       },
       {
@@ -582,6 +749,30 @@
       },
       {
         "type": "multiple-choice",
+        "question": "Which glass does Sunset Sangria go in?",
+        "answers": [
+          "Wine Glass",
+          "Rocks Glass",
+          "Collins Glass",
+          "Coupe Glass"
+        ],
+        "correct-answers": [
+          "Wine Glass"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Is Sunset Sangria shaken or stirred?",
+        "answers": [
+          "Shaken",
+          "Stirred"
+        ],
+        "correct-answers": [
+          "Shaken"
+        ]
+      },
+      {
+        "type": "multiple-choice",
         "question": "How much Pinot Grigio or Pinot Noir goes in Sunset Sangria?",
         "answers": [
           "2 oz",
@@ -681,6 +872,30 @@
           "Pineapple Juice - .25 oz",
           "Shiso Leaf - 1",
           "Soda Water (Topped)"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Which glass does Crouching Tiger go in?",
+        "answers": [
+          "Pint Glass",
+          "Rocks Glass",
+          "Martini Glass",
+          "Coupe Glass"
+        ],
+        "correct-answers": [
+          "Pint Glass"
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "question": "Is Crouching Tiger shaken or stirred?",
+        "answers": [
+          "Shaken",
+          "Stirred"
+        ],
+        "correct-answers": [
+          "Stirred"
         ]
       },
       {

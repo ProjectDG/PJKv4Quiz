@@ -298,14 +298,23 @@ function bindEvents() {
         return;
       }
 
+      const cardOrder = mode ? getOrBuildCardOrder(mode, modeState) : [];
+      const cardIndex = cardOrder[modeState.index] ?? modeState.index;
+      const card = mode && Array.isArray(mode.items) ? mode.items[cardIndex] : null;
       const selectedOptions = Array.isArray(modeState.selectedOptions) ? [...modeState.selectedOptions] : [];
+      const isSinglePickQuestion = shouldUseSingleSelection(card);
       const optionIndex = selectedOptions.indexOf(option);
-      if (optionIndex >= 0) {
+
+      if (isSinglePickQuestion) {
+        modeState.selectedOptions = optionIndex >= 0 ? [] : [option];
+      } else if (optionIndex >= 0) {
         selectedOptions.splice(optionIndex, 1);
+        modeState.selectedOptions = selectedOptions;
       } else {
         selectedOptions.push(option);
+        modeState.selectedOptions = selectedOptions;
       }
-      modeState.selectedOptions = selectedOptions;
+
       modeState.revealed = false;
       modeState.answerCorrect = null;
       state.flashcards[modeId] = modeState;
@@ -744,7 +753,7 @@ function renderFlashcards(mode) {
   }
   const correctAnswers = getCorrectAnswers(card);
   const answersMarkup = modeState.answerOrder.map((option) => {
-    const normalizedOption = String(option);
+    const normalizedOption = isIngredientQuestion(card) ? cleanIngredientAnswer(option) : String(option);
     const isSelected = Array.isArray(modeState.selectedOptions) && modeState.selectedOptions.includes(normalizedOption);
     const isCorrect = correctAnswers.includes(normalizedOption);
 
@@ -865,6 +874,29 @@ function isMultipleChoiceCard(card) {
   return Boolean(card && (card.type === 'multiple-choice' || Array.isArray(card.answers) || Array.isArray(card.options) || Array.isArray(card.choices)));
 }
 
+function shouldUseSingleSelection(card) {
+  if (!card || !Array.isArray(card.answers)) return false;
+
+  const correctAnswers = getCorrectAnswers(card);
+  return correctAnswers.length === 1;
+}
+
+function isIngredientQuestion(card) {
+  return Boolean(card && typeof card.question === 'string' && /^Which ingredients come in .+\? \(Select all that apply\)$/.test(card.question.trim()));
+}
+
+function cleanIngredientAnswer(value) {
+  const text = String(value ?? '').trim();
+  if (!text) return '';
+
+  const withoutMeasure = text.replace(/\s*-\s*.+$/, '').trim();
+  if (withoutMeasure && withoutMeasure !== text) {
+    return withoutMeasure.replace(/\s*\(.*\)\s*$/, '').trim();
+  }
+
+  return text.replace(/\s*\(.*\)\s*$/, '').trim();
+}
+
 function getCorrectAnswers(card) {
   if (!card) return [];
 
@@ -876,12 +908,16 @@ function getCorrectAnswers(card) {
         ? card['corect-answers']
         : [];
 
-  if (correctAnswers.length) {
-    return correctAnswers.map(String);
+  const rawAnswers = correctAnswers.length
+    ? correctAnswers
+    : [card.correctAnswer || card['correct-answer'] || card['corect-answer']].filter((answer) => answer !== undefined && answer !== null && String(answer).trim());
+
+  if (!rawAnswers.length) {
+    return [];
   }
 
-  const fallback = card.correctAnswer || card['correct-answer'] || card['corect-answer'];
-  return fallback ? [String(fallback)] : [];
+  const normalizedAnswers = rawAnswers.map((answer) => isIngredientQuestion(card) ? cleanIngredientAnswer(answer) : String(answer));
+  return normalizedAnswers.filter(Boolean);
 }
 
 function isSelectionCorrect(selectedOptions, correctAnswers) {
@@ -924,25 +960,47 @@ function getOrBuildCardOrder(mode, modeState) {
   return modeState.cardOrder;
 }
 
+function getQuestionPriority(question) {
+  const text = String(question || '').trim();
+
+  if (/^Which ingredients come in .+\? \(Select all that apply\)$/.test(text)) return 0;
+  if (/^Which glass does .+ go in\?$/.test(text)) return 1;
+  if (/^Is .+ shaken or stirred\?$/.test(text)) return 2;
+  if (/^How much .+ goes in .+\?$/.test(text)) return 3;
+  if (/^Which garnishes go on .+\? \(Select all that apply\)$/.test(text)) return 4;
+
+  return 999;
+}
+
 function buildDrinkGroupedCardOrder(items, focusDrink = '') {
-  const groups = getDrinkCardGroups(items);
+  const groups = getDrinkCardGroups(items).map((group) => ({
+    ...group,
+    indices: [...group.indices].sort((a, b) => {
+      const priorityA = getQuestionPriority(items[a]?.question);
+      const priorityB = getQuestionPriority(items[b]?.question);
+      return priorityA - priorityB || a - b;
+    })
+  }));
+
   const normalizedFocus = String(focusDrink || '').trim();
 
   if (!normalizedFocus) {
-    return shuffleArray(groups).flatMap((group) => group.indices);
+    return groups.flatMap((group) => group.indices);
   }
 
   const focused = groups.find((group) => group.drinkName === normalizedFocus);
   if (!focused) {
-    return shuffleArray(groups).flatMap((group) => group.indices);
+    return groups.flatMap((group) => group.indices);
   }
 
   const remainingGroups = groups.filter((group) => group !== focused);
-  return [focused, ...shuffleArray(remainingGroups)].flatMap((group) => group.indices);
+  return [focused, ...remainingGroups].flatMap((group) => group.indices);
 }
 
 function getDrinkCardGroups(items) {
   const ingredientPromptPattern = /^Which ingredients come in (.+)\? \(Select all that apply\)$/;
+  const glassPromptPattern = /^Which glass does (.+) go in\?$/;
+  const shakenPromptPattern = /^Is (.+) shaken or stirred\?$/;
   const amountPromptPattern = /^How much .+ goes in (.+)\?$/;
   const garnishPromptPattern = /^Which garnishes go on (.+)\? \(Select all that apply\)$/;
 
@@ -959,9 +1017,17 @@ function getDrinkCardGroups(items) {
       return;
     }
 
+    const glassMatch = question.match(glassPromptPattern);
+    const shakenMatch = question.match(shakenPromptPattern);
     const amountMatch = question.match(amountPromptPattern);
     const garnishMatch = question.match(garnishPromptPattern);
-    const matchedDrink = amountMatch ? amountMatch[1].trim() : (garnishMatch ? garnishMatch[1].trim() : '');
+    const matchedDrink = glassMatch
+      ? glassMatch[1].trim()
+      : (shakenMatch
+        ? shakenMatch[1].trim()
+        : (amountMatch
+          ? amountMatch[1].trim()
+          : (garnishMatch ? garnishMatch[1].trim() : '')));
     const belongsToActiveDrink = Boolean(matchedDrink && groups.length && activeDrink && matchedDrink === activeDrink);
 
     if (belongsToActiveDrink) {
