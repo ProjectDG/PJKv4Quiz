@@ -224,7 +224,7 @@
           "Chili"
         ],
         "correct-answers": [
-          "Cherry"
+          "Cherry" 
         ]
       },
       {
@@ -1049,7 +1049,7 @@
     "items": [
       {
         "type": "bottle-recognition",
-        "image": "images/BR_the_critic_cabernet.jpg",
+        "image": "BR_images/the-critic_cabernet.jpg",
         "brand": "The Critic",
         "alcoholType": "Cabernet Sauvignon",
         "brandOptions": [
@@ -1067,7 +1067,7 @@
       },
       {
         "type": "bottle-recognition",
-        "image": "images/BR_wheatley_vodka.jpg",
+        "image": "BR_images/wheatley_vodka.jpg",
         "brand": "Wheatley",
         "alcoholType": "Vodka",
         "brandOptions": [
@@ -1093,6 +1093,17 @@
     "samplePrompts": [
       "Choose a base spirit for the drink.",
       "Add the garnish that completes the recipe."
+    ],
+    "items": []
+  },
+  {
+    "id": "drinkgame",
+    "label": "Drink Game",
+    "description": "Fast-paced bartender rush — fulfill order tickets, build streaks, and set high scores!",
+    "type": "drink-game",
+    "samplePrompts": [
+      "Fulfill guest order tickets under pressure.",
+      "Test glassware, recipes, techniques, and garnishes."
     ],
     "items": []
   },

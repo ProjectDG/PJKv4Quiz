@@ -12,13 +12,13 @@ const state = {
 };
 
 const BOTTLE_RECOGNITION_IMAGES = [
-  'images/BR_corazon_tequila_blanco.jpg',
-  'images/BR_rivi_gin.jpg',
-  'images/BR_the_critic_cabernet.jpg',
-  'images/BR_wheatley_vodka.jpg'
+  'BR_images/corazon_tequila_blanco.jpg',
+  'BR_images/gran-gala_triple-sec.jpg',
+  'BR_images/rivi_gin.jpg',
+  'BR_images/the-critic_cabernet.jpg',
+  'BR_images/wheatley_vodka.jpg'
 ];
-
-const BOTTLE_RECOGNITION_PREFIX = 'BR_';
+const BOTTLE_RECOGNITION_IMAGE_DIRECTORY = 'BR_images';
 const BOTTLE_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif'];
 const DEFAULT_BRAND_CHOICES = ['Gran Gala', 'Wheatley', 'Rivi', 'Corazon', 'The Critic', 'Tito\'s', 'Ketel One', 'Grey Goose', 'Patron', 'Don Julio'];
 const DEFAULT_ALCOHOL_TYPE_CHOICES = [
@@ -83,6 +83,92 @@ const ALCOHOL_TYPE_PATTERNS = [
   { pattern: /vodka/, label: 'Vodka' }
 ];
 
+const ALCOHOL_TYPE_FAMILIES = {
+  'Vodka': 'clear-spirits',
+  'Gin': 'clear-spirits',
+  'Rum': 'cane-spirits',
+  'Tequila': 'agave-spirits',
+  'Mezcal': 'agave-spirits',
+  'Whiskey': 'whiskey',
+  'Bourbon': 'whiskey',
+  'Scotch': 'whiskey',
+  'Brandy': 'grape-spirits',
+  'Cognac': 'grape-spirits',
+  'Sake': 'rice-spirits',
+  'Soju': 'rice-spirits',
+  'Baijiu': 'rice-spirits',
+  'Absinthe': 'herbal-spirits',
+  'Liqueur': 'fortified-liqueurs',
+  'Aperitif': 'fortified-liqueurs',
+  'Digestif': 'fortified-liqueurs',
+  'Vermouth': 'fortified-liqueurs',
+  'Amaro': 'fortified-liqueurs',
+  'Triple Sec': 'fortified-liqueurs',
+  'Cabernet Sauvignon': 'red-wine',
+  'Pinot Noir': 'red-wine',
+  'Merlot': 'red-wine',
+  'Chardonnay': 'white-wine',
+  'Sauvignon Blanc': 'white-wine',
+  'Riesling': 'white-wine',
+  'Rosé': 'rose-wine',
+  'Sparkling Wine': 'sparkling-wine'
+};
+
+const DEFAULT_GLASS_OPTIONS = ['Rocks Glass', 'Martini Glass', 'Collins Glass', 'Coupe Glass', 'Highball Glass'];
+const DEFAULT_ICE_OPTIONS = ['No Ice (Neat/Up)', 'Cubed Ice', 'Crushed Ice', 'Large Cube'];
+const DEFAULT_TOOL_OPTIONS = ['Mixing Glass (Stir)', 'Cocktail Shaker (Shake)', 'Build in Glass'];
+const DEFAULT_GARNISH_OPTIONS = ['Dehydrated Lemon & Basil Sprig', 'Cherry', 'Orange Twist', 'Olive', 'Pickled Carrot', 'Lime Wheel', 'Cucumber Ribbon', 'Mint Sprig', 'Chili'];
+const DEFAULT_OUNCE_OPTIONS = ['.25 oz', '.5 oz', '.75 oz', '1 oz', '1.25 oz', '1.5 oz', '1.75 oz', '2 oz', '2.5 oz', '3 oz', '4 oz', '5 oz'];
+
+// Configurable bottle layout based on reference diagram (Speed Rail + Backbar Grid)
+const DRINK_GAME_BOTTLE_LAYOUT = [
+  // Speed rail (bottom row 1-17)
+  { id: 'b1', name: 'Rivi Gin', row: 'rail', col: 1 },
+  { id: 'b2', name: 'Wheatley Vodka', row: 'rail', col: 2 },
+  { id: 'b3', name: 'Corazon Tequila', row: 'rail', col: 3 },
+  { id: 'b4', name: 'Cincoro Reposado', row: 'rail', col: 4 },
+  { id: 'b5', name: 'Sazerac Rye', row: 'rail', col: 5 },
+  { id: 'b6', name: 'Campari', row: 'rail', col: 6 },
+  { id: 'b7', name: 'Sweet Vermouth', row: 'rail', col: 7 },
+  { id: 'b8', name: 'Dry Vermouth', row: 'rail', col: 8 },
+  { id: 'b9', name: 'Triple Sec', row: 'rail', col: 9 },
+  { id: 'b10', name: 'Gran Gala', row: 'rail', col: 10 },
+  { id: 'b11', name: 'Lychee Syrup', row: 'rail', col: 11 },
+  { id: 'b12', name: 'Lemon Juice', row: 'rail', col: 12 },
+  { id: 'b13', name: 'Pomegranate Juice', row: 'rail', col: 13 },
+  { id: 'b14', name: 'Bloody Mary Mix', row: 'rail', col: 14 },
+  { id: 'b15', name: 'Olive Brine', row: 'rail', col: 15 },
+  { id: 'b16', name: 'Angostura Bitters', row: 'rail', col: 16 },
+  { id: 'b17', name: 'The Critic Cabernet', row: 'rail', col: 17 },
+  // Backbar tier 1 (top right row 1)
+  { id: 'b18', name: 'Patron Tequila', row: 'top', col: 1 },
+  { id: 'b19', name: 'Don Julio', row: 'top', col: 2 },
+  { id: 'b20', name: 'Tito\'s Vodka', row: 'top', col: 3 },
+  { id: 'b21', name: 'Ketel One', row: 'top', col: 4 },
+  { id: 'b22', name: 'Grey Goose', row: 'top', col: 5 },
+  { id: 'b23', name: 'Hendrick\'s Gin', row: 'top', col: 6 },
+  // Backbar tier 2
+  { id: 'b24', name: 'Casamigos Blanco', row: 'mid1', col: 1 },
+  { id: 'b25', name: 'Woodford Reserve', row: 'mid1', col: 2 },
+  { id: 'b26', name: 'Maker\'s Mark', row: 'mid1', col: 3 },
+  { id: 'b27', name: 'Jameson', row: 'mid1', col: 4 },
+  { id: 'b28', name: 'Bacardi Rum', row: 'mid1', col: 5 },
+  { id: 'b29', name: 'Captain Morgan', row: 'mid1', col: 6 },
+  // Backbar tier 3
+  { id: 'b30', name: 'Aperol', row: 'mid2', col: 1 },
+  { id: 'b31', name: 'Kahlua', row: 'mid2', col: 2 },
+  { id: 'b32', name: 'Baileys', row: 'mid2', col: 3 },
+  { id: 'b33', name: 'Disaronno', row: 'mid2', col: 4 },
+  { id: 'b34', name: 'Grand Marnier', row: 'mid2', col: 5 },
+  { id: 'b35', name: 'St Germain', row: 'mid2', col: 6 },
+  // Backbar tier 4 (5 bottles)
+  { id: 'b36', name: 'Absolut Vodka', row: 'mid3', col: 1 },
+  { id: 'b37', name: 'Tanqueray', row: 'mid3', col: 2 },
+  { id: 'b38', name: 'Crown Royal', row: 'mid3', col: 3 },
+  { id: 'b39', name: 'Jack Daniel\'s', row: 'mid3', col: 4 },
+  { id: 'b40', name: 'Hennessy', row: 'mid3', col: 5 }
+];
+
 function createModeState() {
   return {
     index: 0,
@@ -109,7 +195,29 @@ function createModeState() {
     buildRoundCorrect: null,
     buildRoundOptions: [],
     buildRoundKey: '',
-    buildHintUsed: false
+    buildHintUsed: false,
+    gameScore: 0,
+    gameStreak: 0,
+    gameMaxStreak: 0,
+    gameLives: 3,
+    gameTickets: [],
+    gameTicketIndex: 0,
+    gameAnswerRevealed: false,
+    gameSelectedAnswer: '',
+    gameRoundCorrect: null,
+
+    // New Interactive Flow State
+    gameStage: 'prep', // 'prep' (glass/ice/tool) -> 'build' (ingredients) -> 'garnish' -> 'complete'
+    gameSelectedGlass: '',
+    gameSelectedIce: '',
+    gameSelectedTool: '',
+    gameAddedIngredients: [], // [{ name, oz }]
+    gameSelectedGarnishes: [],
+    gameActiveModal: null, // null | 'glass' | 'ice' | 'tool' | 'bottle'
+    gameActiveBottle: null,
+    gameActiveOz: '.75 oz',
+    gameErrorMessage: '',
+    gameDrinkImage: ''
   };
 }
 
@@ -136,6 +244,26 @@ function resetCardProgress(modeState) {
   modeState.buildRoundOptions = [];
   modeState.buildRoundKey = '';
   modeState.buildHintUsed = false;
+  modeState.gameScore = 0;
+  modeState.gameStreak = 0;
+  modeState.gameMaxStreak = 0;
+  modeState.gameLives = 3;
+  modeState.gameTickets = [];
+  modeState.gameTicketIndex = 0;
+  modeState.gameAnswerRevealed = false;
+  modeState.gameSelectedAnswer = '';
+  modeState.gameRoundCorrect = null;
+  modeState.gameStage = 'prep';
+  modeState.gameSelectedGlass = '';
+  modeState.gameSelectedIce = '';
+  modeState.gameSelectedTool = '';
+  modeState.gameAddedIngredients = [];
+  modeState.gameSelectedGarnishes = [];
+  modeState.gameActiveModal = null;
+  modeState.gameActiveBottle = null;
+  modeState.gameActiveOz = '.75 oz';
+  modeState.gameErrorMessage = '';
+  modeState.gameDrinkImage = '';
 }
 
 function resetModeState(modeId) {
@@ -304,6 +432,233 @@ function bindEvents() {
       if (button.dataset.action === 'build-hint') {
         modeState.buildHintUsed = true;
         state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+    }
+
+    if (isDrinkGameMode(currentMode)) {
+      // Modal Open Triggers
+      if (button.dataset.action === 'game-open-modal') {
+        const modalType = String(button.dataset.modalType || '').trim();
+        modeState.gameActiveModal = modalType;
+        modeState.gameErrorMessage = '';
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Modal Close
+      if (button.dataset.action === 'game-close-modal') {
+        modeState.gameActiveModal = null;
+        modeState.gameActiveBottle = null;
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Select Glass
+      if (button.dataset.action === 'game-select-glass') {
+        modeState.gameSelectedGlass = String(button.dataset.value || '').trim();
+        modeState.gameActiveModal = null;
+        modeState.gameErrorMessage = '';
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Select Ice
+      if (button.dataset.action === 'game-select-ice') {
+        modeState.gameSelectedIce = String(button.dataset.value || '').trim();
+        modeState.gameActiveModal = null;
+        modeState.gameErrorMessage = '';
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Select Tool
+      if (button.dataset.action === 'game-select-tool') {
+        modeState.gameSelectedTool = String(button.dataset.value || '').trim();
+        modeState.gameActiveModal = null;
+        modeState.gameErrorMessage = '';
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Click Bottle on Station
+      if (button.dataset.action === 'game-click-bottle') {
+        const bottleName = String(button.dataset.bottleName || '').trim();
+        modeState.gameActiveBottle = bottleName;
+        modeState.gameActiveModal = 'bottle';
+        modeState.gameErrorMessage = '';
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Select Ounces in Bottle Modal
+      if (button.dataset.action === 'game-select-oz') {
+        modeState.gameActiveOz = String(button.dataset.oz || '').trim();
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Add Bottle Ingredient
+      if (button.dataset.action === 'game-add-bottle-ingredient') {
+        if (modeState.gameActiveBottle) {
+          modeState.gameAddedIngredients.push({
+            name: modeState.gameActiveBottle,
+            oz: modeState.gameActiveOz || '.75 oz'
+          });
+        }
+        modeState.gameActiveModal = null;
+        modeState.gameActiveBottle = null;
+        modeState.gameErrorMessage = '';
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Remove Ingredient From List
+      if (button.dataset.action === 'game-remove-ingredient') {
+        const index = parseInt(button.dataset.index, 10);
+        if (!isNaN(index) && index >= 0 && index < modeState.gameAddedIngredients.length) {
+          modeState.gameAddedIngredients.splice(index, 1);
+        }
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Mix (Complete Ingredients Stage)
+      if (button.dataset.action === 'game-mix-build') {
+        const ticket = modeState.gameTickets[modeState.gameTicketIndex];
+        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name === ticket?.drinkName);
+
+        // Validate Glass, Ice, Tool, and Ingredients
+        let errors = [];
+        if (!modeState.gameSelectedGlass) errors.push('Please select glassware!');
+        if (!modeState.gameSelectedIce) errors.push('Please select ice!');
+        if (!modeState.gameSelectedTool) errors.push('Please select a tool!');
+
+        if (drinkProfile) {
+          if (drinkProfile.glass && modeState.gameSelectedGlass.toLowerCase() !== drinkProfile.glass.toLowerCase()) {
+            errors.push(`Wrong Glass! Expected ${drinkProfile.glass}.`);
+          }
+          if (drinkProfile.method && !modeState.gameSelectedTool.toLowerCase().includes(drinkProfile.method.toLowerCase())) {
+            errors.push(`Wrong Preparation Method! Expected ${drinkProfile.method}.`);
+          }
+
+          // Validate required ingredients
+          const userIngredientsClean = modeState.gameAddedIngredients.map((i) => i.name.toLowerCase());
+          const missing = (drinkProfile.ingredients || []).filter((req) => {
+            const reqClean = cleanIngredientAnswer(req).toLowerCase();
+            return !userIngredientsClean.some((u) => reqClean.includes(u) || u.includes(reqClean));
+          });
+
+          if (missing.length > 0) {
+            errors.push(`Missing or incorrect ingredients! Check your mix.`);
+          }
+        }
+
+        if (errors.length > 0) {
+          modeState.gameErrorMessage = errors.join(' ');
+          modeState.gameLives = Math.max(0, modeState.gameLives - 1);
+          if (modeState.gameLives <= 0) {
+            modeState.completed = true;
+            checkAndSaveHighScore(modeState.gameScore);
+          }
+        } else {
+          modeState.gameErrorMessage = '';
+          modeState.gameStage = 'garnish';
+        }
+
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Toggle Garnish
+      if (button.dataset.action === 'game-toggle-garnish') {
+        const garnish = String(button.dataset.garnish || '').trim();
+        const idx = modeState.gameSelectedGarnishes.indexOf(garnish);
+        if (idx >= 0) {
+          modeState.gameSelectedGarnishes.splice(idx, 1);
+        } else {
+          modeState.gameSelectedGarnishes.push(garnish);
+        }
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Serve Drink
+      if (button.dataset.action === 'game-serve-drink') {
+        const ticket = modeState.gameTickets[modeState.gameTicketIndex];
+        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name === ticket?.drinkName);
+
+        let garnishError = false;
+        if (drinkProfile && drinkProfile.garnishes && drinkProfile.garnishes.length > 0) {
+          const reqGarnishes = drinkProfile.garnishes.map((g) => g.toLowerCase());
+          const selectedGarnishes = modeState.gameSelectedGarnishes.map((g) => g.toLowerCase());
+          const isCorrect = reqGarnishes.length === selectedGarnishes.length && reqGarnishes.every((rg) => selectedGarnishes.some((sg) => sg.includes(rg) || rg.includes(sg)));
+          if (!isCorrect) {
+            garnishError = true;
+          }
+        }
+
+        if (garnishError) {
+          modeState.gameErrorMessage = `Incorrect garnish! Required: ${(drinkProfile.garnishes || []).join(', ')}`;
+          modeState.gameLives = Math.max(0, modeState.gameLives - 1);
+          if (modeState.gameLives <= 0) {
+            modeState.completed = true;
+            checkAndSaveHighScore(modeState.gameScore);
+          }
+        } else {
+          modeState.gameErrorMessage = '';
+          modeState.gameStage = 'complete';
+          modeState.gameStreak += 1;
+          const points = 250 + ((modeState.gameStreak - 1) * 100);
+          modeState.gameScore += points;
+          if (modeState.gameStreak > modeState.gameMaxStreak) {
+            modeState.gameMaxStreak = modeState.gameStreak;
+          }
+          setCardResult(modeState, modeState.gameTicketIndex, true);
+        }
+
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Next Ticket
+      if (button.dataset.action === 'game-next-ticket') {
+        const ticketCount = modeState.gameTickets.length;
+        if (modeState.gameTicketIndex >= ticketCount - 1 || modeState.gameLives <= 0) {
+          modeState.completed = true;
+          checkAndSaveHighScore(modeState.gameScore);
+        } else {
+          modeState.gameTicketIndex += 1;
+          modeState.gameStage = 'prep';
+          modeState.gameSelectedGlass = '';
+          modeState.gameSelectedIce = '';
+          modeState.gameSelectedTool = '';
+          modeState.gameAddedIngredients = [];
+          modeState.gameSelectedGarnishes = [];
+          modeState.gameActiveModal = null;
+          modeState.gameActiveBottle = null;
+          modeState.gameErrorMessage = '';
+        }
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      if (button.dataset.action === 'game-restart') {
+        resetModeState(modeId);
         renderView();
         return;
       }
@@ -586,7 +941,7 @@ async function discoverBottleRecognitionImages(modes = []) {
   const discovered = [];
 
   try {
-    const response = await fetch('./images/');
+    const response = await fetch(`./${BOTTLE_RECOGNITION_IMAGE_DIRECTORY}/`);
     if (response.ok) {
       const html = await response.text();
       const parser = new DOMParser();
@@ -597,9 +952,8 @@ async function discoverBottleRecognitionImages(modes = []) {
         const href = String(link.getAttribute('href') || '').trim();
         const fileName = getFileName(href);
         if (!fileName) return;
-        if (!fileName.startsWith(BOTTLE_RECOGNITION_PREFIX)) return;
         if (!isBottleImageFile(fileName)) return;
-        discovered.push(`images/${fileName}`);
+        discovered.push(`${BOTTLE_RECOGNITION_IMAGE_DIRECTORY}/${fileName}`);
       });
     }
   } catch (error) {
@@ -618,17 +972,18 @@ function isBottleImageFile(fileName) {
 }
 
 function normalizeImagePath(filePath) {
-  const normalized = String(filePath || '').trim();
+  const normalized = String(filePath || '').trim().replace(/^\.\//, '');
   if (!normalized) return '';
-
-  if (normalized.startsWith('./')) {
-    return normalizeImagePath(normalized.slice(2));
-  }
 
   const fileName = getFileName(normalized);
   if (!fileName) return '';
 
-  return normalized.startsWith('images/') ? normalized : `images/${fileName}`;
+  // Keep explicit folder paths (for example BR_images/*) untouched.
+  if (normalized.includes('/')) {
+    return normalized;
+  }
+
+  return `${BOTTLE_RECOGNITION_IMAGE_DIRECTORY}/${fileName}`;
 }
 
 function collectBottleRecognitionImagesFromModes(modes = []) {
@@ -638,7 +993,7 @@ function collectBottleRecognitionImagesFromModes(modes = []) {
     .map((item) => normalizeImagePath(item?.image || ''))
     .filter((imagePath) => {
       const fileName = getFileName(imagePath);
-      return Boolean(fileName && fileName.startsWith(BOTTLE_RECOGNITION_PREFIX) && isBottleImageFile(fileName));
+      return Boolean(fileName && isBottleImageFile(fileName));
     });
 }
 
@@ -703,12 +1058,12 @@ function getBottleImageMatchKey(fileName) {
     .trim()
     .toLowerCase()
     .replace(/\.[^.]+$/, '')
-    .replace(new RegExp(`^${BOTTLE_RECOGNITION_PREFIX.toLowerCase()}`), '')
     .replace(/[^a-z0-9]/g, '');
 }
 
 function buildBottleRecognitionItemFromImage(imagePath, knownBrands = [], knownTypes = []) {
   const imageName = getFileName(imagePath);
+  const parsedMeta = parseBottleFileNameMetadata(imageName);
   const inferredBrand = inferBottleBrandFromFileName(imageName);
   const inferredType = inferBottleTypeFromFileName(imageName);
 
@@ -718,16 +1073,19 @@ function buildBottleRecognitionItemFromImage(imagePath, knownBrands = [], knownT
     image: imagePath,
     brand: inferredBrand,
     alcoholType: inferredType,
+    fileNameCategories: parsedMeta.categories,
+    fileNameExtraCategories: parsedMeta.extraCategories,
     brandOptions: buildBrandOptions(inferredBrand, knownBrands, DEFAULT_BRAND_CHOICES),
     typeOptions: buildAlcoholTypeOptions(inferredType, knownTypes, DEFAULT_ALCOHOL_TYPE_CHOICES)
   };
 }
 
 function inferBottleBrandFromFileName(fileName) {
-  const clean = String(fileName || '').trim()
-    .replace(/\.[^.]+$/, '')
-    .replace(new RegExp(`^${BOTTLE_RECOGNITION_PREFIX}`), '')
-    .replace(/[_-]+/g, ' ')
+  const meta = parseBottleFileNameMetadata(fileName);
+  const clean = String(meta.brandSegment || '')
+    .trim()
+    .replace(/-+/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 
   if (!clean) return 'Unknown Brand';
@@ -736,7 +1094,32 @@ function inferBottleBrandFromFileName(fileName) {
 }
 
 function inferBottleTypeFromFileName(fileName) {
-  return normalizeAlcoholType(fileName) || 'Unknown';
+  const meta = parseBottleFileNameMetadata(fileName);
+  const typeSegment = String(meta.alcoholTypeSegment || '')
+    .trim()
+    .replace(/-+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return normalizeAlcoholType(typeSegment) || 'Unknown';
+}
+
+function parseBottleFileNameMetadata(fileName) {
+  const stem = String(fileName || '')
+    .trim()
+    .replace(/\.[^.]+$/, '');
+
+  const categories = stem
+    .split('_')
+    .map((part) => String(part || '').trim())
+    .filter(Boolean);
+
+  return {
+    categories,
+    brandSegment: categories[0] || '',
+    alcoholTypeSegment: categories[1] || '',
+    extraCategories: categories.slice(2)
+  };
 }
 
 function buildBrandOptions(correctValue, knownValues = [], fallbackValues = []) {
@@ -756,7 +1139,23 @@ function buildAlcoholTypeOptions(correctValue, knownValues = [], fallbackValues 
 
   const unique = Array.from(new Set(merged));
   const distractors = unique.filter((value) => value !== normalizedCorrect);
-  const randomizedDistractors = shuffleArray(distractors).slice(0, 5);
+  const correctFamily = getAlcoholTypeFamily(normalizedCorrect);
+  const correctGroup = getAlcoholTypeGroup(correctFamily);
+
+  const sameFamily = distractors.filter((value) => getAlcoholTypeFamily(value) === correctFamily);
+  const sameGroup = distractors.filter((value) => {
+    const family = getAlcoholTypeFamily(value);
+    return family !== correctFamily && getAlcoholTypeGroup(family) === correctGroup;
+  });
+  const differentGroup = distractors.filter((value) => getAlcoholTypeGroup(getAlcoholTypeFamily(value)) !== correctGroup);
+
+  const prioritized = [
+    ...shuffleArray(sameFamily),
+    ...shuffleArray(sameGroup),
+    ...shuffleArray(differentGroup)
+  ];
+
+  const randomizedDistractors = prioritized.slice(0, 5);
   const combined = shuffleArray([normalizedCorrect, ...randomizedDistractors]);
 
   if (combined.length < 6) {
@@ -764,6 +1163,43 @@ function buildAlcoholTypeOptions(correctValue, knownValues = [], fallbackValues 
   }
 
   return combined.slice(0, 6);
+}
+
+function getAlcoholTypeFamily(value) {
+  const normalized = normalizeAlcoholType(value);
+  if (!normalized) return 'unknown';
+
+  if (ALCOHOL_TYPE_FAMILIES[normalized]) {
+    return ALCOHOL_TYPE_FAMILIES[normalized];
+  }
+
+  const lower = normalized.toLowerCase();
+  if (lower.includes('wine')) return 'wine';
+  if (lower.includes('liqueur') || lower.includes('vermouth') || lower.includes('amaro')) return 'fortified-liqueurs';
+  if (lower.includes('whiskey') || lower.includes('bourbon') || lower.includes('scotch')) return 'whiskey';
+  if (lower.includes('vodka') || lower.includes('gin')) return 'clear-spirits';
+  if (lower.includes('tequila') || lower.includes('mezcal')) return 'agave-spirits';
+  if (lower.includes('rum')) return 'cane-spirits';
+
+  return 'other';
+}
+
+function getAlcoholTypeGroup(family) {
+  const normalized = String(family || '').trim().toLowerCase();
+
+  if (['red-wine', 'white-wine', 'rose-wine', 'sparkling-wine', 'wine'].includes(normalized)) {
+    return 'wine';
+  }
+
+  if (['fortified-liqueurs'].includes(normalized)) {
+    return 'fortified';
+  }
+
+  if (['clear-spirits', 'cane-spirits', 'agave-spirits', 'whiskey', 'grape-spirits', 'rice-spirits', 'herbal-spirits'].includes(normalized)) {
+    return 'spirits';
+  }
+
+  return 'other';
 }
 
 function ensureSixChoices(values, fillers = []) {
@@ -973,6 +1409,11 @@ function renderView() {
 
   if (mode.type === 'bottle-recognition') {
     renderBottleRecognition(mode);
+    return;
+  }
+
+  if (isDrinkGameMode(mode)) {
+    renderDrinkGame(mode);
     return;
   }
 
@@ -1427,12 +1868,485 @@ function renderBuildDrinkCompletion(mode, modeState, itemCount) {
   updateActiveModeButtons();
 }
 
+function isDrinkGameMode(mode) {
+  return Boolean(mode && (mode.id === 'drinkgame' || mode.type === 'drink-game'));
+}
+
+function getHighScore() {
+  const saved = localStorage.getItem('drinkgame_highscore');
+  return saved ? Math.max(0, parseInt(saved, 10) || 0) : 0;
+}
+
+function checkAndSaveHighScore(score) {
+  const current = getHighScore();
+  if (score > current) {
+    localStorage.setItem('drinkgame_highscore', String(score));
+    return true;
+  }
+  return false;
+}
+
+function getDrinkProfilesFromModes(modes = []) {
+  const flashcardMode = modes.find((m) => m.id === 'flashcards' || m.type === 'flashcards');
+  const items = Array.isArray(flashcardMode?.items) ? flashcardMode.items : [];
+  const drinkMap = new Map();
+
+  items.forEach((item) => {
+    const q = String(item.question || '').trim();
+
+    const ingMatch = q.match(/^Which ingredients come in (.+)\? \(Select all that apply\)$/);
+    if (ingMatch) {
+      const name = ingMatch[1].trim();
+      if (!drinkMap.has(name)) drinkMap.set(name, { name, ingredients: [], glass: '', method: '', garnishes: [] });
+      const entry = drinkMap.get(name);
+      entry.ingredients = getCorrectAnswers(item).map(cleanIngredientAnswer).filter(Boolean);
+      return;
+    }
+
+    const glassMatch = q.match(/^Which glass does (.+) go in\?$/);
+    if (glassMatch) {
+      const name = glassMatch[1].trim();
+      if (!drinkMap.has(name)) drinkMap.set(name, { name, ingredients: [], glass: '', method: '', garnishes: [] });
+      const entry = drinkMap.get(name);
+      const glasses = getCorrectAnswers(item);
+      if (glasses.length) entry.glass = glasses[0];
+      return;
+    }
+
+    const shakeMatch = q.match(/^Is (.+) shaken or stirred\?$/);
+    if (shakeMatch) {
+      const name = shakeMatch[1].trim();
+      if (!drinkMap.has(name)) drinkMap.set(name, { name, ingredients: [], glass: '', method: '', garnishes: [] });
+      const entry = drinkMap.get(name);
+      const methods = getCorrectAnswers(item);
+      if (methods.length) entry.method = methods[0];
+      return;
+    }
+
+    const garnishMatch = q.match(/^Which garnishes go on (.+)\? \(Select all that apply\)$/);
+    if (garnishMatch) {
+      const name = garnishMatch[1].trim();
+      if (!drinkMap.has(name)) drinkMap.set(name, { name, ingredients: [], glass: '', method: '', garnishes: [] });
+      const entry = drinkMap.get(name);
+      entry.garnishes = getCorrectAnswers(item);
+      return;
+    }
+  });
+
+  return Array.from(drinkMap.values());
+}
+
+function getOrBuildDrinkGameTickets(modeState, modes) {
+  if (Array.isArray(modeState.gameTickets) && modeState.gameTickets.length > 0) {
+    return modeState.gameTickets;
+  }
+
+  const drinkProfiles = getDrinkProfilesFromModes(modes);
+  const tickets = drinkProfiles.map((drink) => ({
+    drinkName: drink.name,
+    tag: 'ORDER TICKET',
+    prompt: `Order Up: 1x ${drink.name}`
+  }));
+
+  const shuffledTickets = shuffleArray(tickets);
+  modeState.gameTickets = shuffledTickets.length ? shuffledTickets : [
+    { drinkName: "Call Me 'Koko'", tag: 'ORDER TICKET', prompt: 'Order Up: 1x Call Me \'Koko\'' },
+    { drinkName: "Mary Not Martha", tag: 'ORDER TICKET', prompt: 'Order Up: 1x Mary Not Martha' },
+    { drinkName: "Negroni", tag: 'ORDER TICKET', prompt: 'Order Up: 1x Negroni' }
+  ];
+  return modeState.gameTickets;
+}
+
+function renderDrinkGameModal(modeState) {
+  if (!modeState.gameActiveModal) return '';
+
+  const modalType = modeState.gameActiveModal;
+
+  if (modalType === 'glass') {
+    const glassOptionsMarkup = DEFAULT_GLASS_OPTIONS.map((glass) => `
+      <button class="answer-btn game-modal-option-btn" type="button" data-action="game-select-glass" data-value="${escapeAttribute(glass)}">
+        <span class="game-placeholder-icon">🍸</span>
+        <span>${escapeHtml(glass)}</span>
+      </button>
+    `).join('');
+
+    return `
+      <div class="modal active" id="gameModal" aria-hidden="false">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Select Glassware</h2>
+            <button class="close-btn" type="button" data-action="game-close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="game-modal-grid">${glassOptionsMarkup}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (modalType === 'ice') {
+    const iceOptionsMarkup = DEFAULT_ICE_OPTIONS.map((ice) => `
+      <button class="answer-btn game-modal-option-btn" type="button" data-action="game-select-ice" data-value="${escapeAttribute(ice)}">
+        <span class="game-placeholder-icon">🧊</span>
+        <span>${escapeHtml(ice)}</span>
+      </button>
+    `).join('');
+
+    return `
+      <div class="modal active" id="gameModal" aria-hidden="false">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Select Ice</h2>
+            <button class="close-btn" type="button" data-action="game-close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="game-modal-grid">${iceOptionsMarkup}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (modalType === 'tool') {
+    const toolOptionsMarkup = DEFAULT_TOOL_OPTIONS.map((tool) => `
+      <button class="answer-btn game-modal-option-btn" type="button" data-action="game-select-tool" data-value="${escapeAttribute(tool)}">
+        <span class="game-placeholder-icon">🥄</span>
+        <span>${escapeHtml(tool)}</span>
+      </button>
+    `).join('');
+
+    return `
+      <div class="modal active" id="gameModal" aria-hidden="false">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Select Tool / Vessel</h2>
+            <button class="close-btn" type="button" data-action="game-close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="game-modal-grid">${toolOptionsMarkup}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (modalType === 'bottle') {
+    const bottleName = modeState.gameActiveBottle || 'Bottle';
+    const currentOz = modeState.gameActiveOz || '.75 oz';
+
+    const ozButtonsMarkup = DEFAULT_OUNCE_OPTIONS.map((oz) => `
+      <button class="answer-btn game-oz-btn ${currentOz === oz ? 'selected' : ''}" type="button" data-action="game-select-oz" data-oz="${escapeAttribute(oz)}">
+        ${escapeHtml(oz)}
+      </button>
+    `).join('');
+
+    return `
+      <div class="modal active" id="gameModal" aria-hidden="false">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Pour: ${escapeHtml(bottleName)}</h2>
+            <button class="close-btn" type="button" data-action="game-close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="bottle-pour-modal-body">
+              <div class="bottle-modal-img-placeholder">
+                <span class="game-placeholder-icon">🍾</span>
+                <p><strong>${escapeHtml(bottleName)}</strong></p>
+              </div>
+              <div class="pour-amount-selector">
+                <label class="option-label">Select Amount to Pour:</label>
+                <div class="oz-grid">${ozButtonsMarkup}</div>
+              </div>
+              <button class="action-btn game-confirm-pour-btn" type="button" data-action="game-add-bottle-ingredient">
+                Pour ${escapeHtml(currentOz)} into Vessel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  return '';
+}
+
+function renderDrinkGameStation(modeState) {
+  const railBottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'rail');
+  const topBottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'top');
+  const mid1Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mid1');
+  const mid2Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mid2');
+  const mid3Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mid3');
+
+  const renderBottleCircles = (bottles) => bottles.map((b) => `
+    <button class="station-bottle-circle" type="button" data-action="game-click-bottle" data-bottle-name="${escapeAttribute(b.name)}" title="${escapeAttribute(b.name)}">
+      <span class="circle-icon">⭕</span>
+      <span class="circle-label">${escapeHtml(b.name)}</span>
+    </button>
+  `).join('');
+
+  return `
+    <div class="interactive-station-container">
+      <div class="station-prep-controls">
+        <button class="station-prep-btn ${modeState.gameSelectedGlass ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="glass">
+          <span class="prep-icon">🍸</span>
+          <span class="prep-text">${escapeHtml(modeState.gameSelectedGlass || 'GLASS')}</span>
+        </button>
+        <button class="station-prep-btn ${modeState.gameSelectedIce ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="ice">
+          <span class="prep-icon">🧊</span>
+          <span class="prep-text">${escapeHtml(modeState.gameSelectedIce || 'ICE')}</span>
+        </button>
+        <button class="station-prep-btn ${modeState.gameSelectedTool ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="tool">
+          <span class="prep-icon">🥄</span>
+          <span class="prep-text">${escapeHtml(modeState.gameSelectedTool || 'TOOLS')}</span>
+        </button>
+      </div>
+
+      <div class="station-grid-layout">
+        <!-- Backbar Shelf -->
+        <div class="backbar-shelf-area">
+          <div class="backbar-row">${renderBottleCircles(topBottles)}</div>
+          <div class="backbar-row">${renderBottleCircles(mid1Bottles)}</div>
+          <div class="backbar-row">${renderBottleCircles(mid2Bottles)}</div>
+          <div class="backbar-row">${renderBottleCircles(mid3Bottles)}</div>
+        </div>
+
+        <!-- Speed Rail (Bottom Row) -->
+        <div class="speedrail-area">
+          <span class="rail-label">SPEED RAIL</span>
+          <div class="speedrail-row">${renderBottleCircles(railBottles)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderDrinkGame(mode) {
+  const modeState = state.flashcards[mode.id] || createModeState();
+  state.flashcards[mode.id] = modeState;
+
+  const tickets = getOrBuildDrinkGameTickets(modeState, state.modes);
+  const ticketCount = tickets.length;
+
+  if (modeState.completed) {
+    renderDrinkGameCompletion(mode, modeState);
+    return;
+  }
+
+  if (modeState.gameTicketIndex >= ticketCount) {
+    modeState.completed = true;
+    checkAndSaveHighScore(modeState.gameScore);
+    renderDrinkGameCompletion(mode, modeState);
+    return;
+  }
+
+  const ticket = tickets[modeState.gameTicketIndex];
+  const hearts = '❤️ '.repeat(modeState.gameLives) + '💔 '.repeat(Math.max(0, 3 - modeState.gameLives));
+  const highScore = getHighScore();
+
+  // STAGE 1: Prep & Build Stage
+  if (modeState.gameStage === 'prep' || modeState.gameStage === 'build') {
+    const ingredientsListMarkup = modeState.gameAddedIngredients.length > 0
+      ? modeState.gameAddedIngredients.map((item, idx) => `
+          <div class="game-added-ingredient-row">
+            <span>🔹 <strong>${escapeHtml(item.name)}</strong> - ${escapeHtml(item.oz)}</span>
+            <button class="game-remove-ing-btn" type="button" data-action="game-remove-ingredient" data-index="${idx}">&times;</button>
+          </div>
+        `).join('')
+      : `<p class="game-empty-list-text">No bottles poured yet. Click any bottle below to pour!</p>`;
+
+    const errorMessageMarkup = modeState.gameErrorMessage
+      ? `<div class="game-error-toast">⚠️ ${escapeHtml(modeState.gameErrorMessage)}</div>`
+      : '';
+
+    mainContainer.innerHTML = `
+      <section class="quiz-view">
+        <div class="quiz-header">
+          <button class="back-btn" type="button" data-action="back">Back</button>
+          <h2>${escapeHtml(mode.label)}</h2>
+        </div>
+
+        <div class="quiz-card drink-game-card">
+          <div class="ticket-status-bar">
+            <div class="status-item"><span class="status-label">Lives:</span><span class="heart-lives">${hearts}</span></div>
+            <div class="status-item"><span class="status-label">Score:</span><span>${modeState.gameScore} PTS</span></div>
+            <div class="status-item streak-badge"><span>🔥 ${modeState.gameStreak}</span></div>
+            <div class="status-item high-score-text"><span>🏆 Best: ${highScore}</span></div>
+          </div>
+
+          <div class="ticket-container">
+            <span class="ticket-header-tag">${escapeHtml(ticket.tag || 'ORDER TICKET')} #${modeState.gameTicketIndex + 1} / ${ticketCount}</span>
+            <p class="ticket-prompt">ORDER UP: <strong>${escapeHtml(ticket.drinkName)}</strong></p>
+          </div>
+
+          ${errorMessageMarkup}
+
+          <!-- Current Mixing Vessel Contents Summary -->
+          <div class="game-vessel-summary-panel">
+            <h4>Mixing Vessel Contents</h4>
+            <div class="vessel-specs">
+              <span>Glass: <strong>${escapeHtml(modeState.gameSelectedGlass || 'None')}</strong></span> |
+              <span>Ice: <strong>${escapeHtml(modeState.gameSelectedIce || 'None')}</strong></span> |
+              <span>Tool: <strong>${escapeHtml(modeState.gameSelectedTool || 'None')}</strong></span>
+            </div>
+            <div class="vessel-ingredients-list">${ingredientsListMarkup}</div>
+            <button class="action-btn game-mix-btn" type="button" data-action="game-mix-build">
+              🥄 MIX (COMPLETE BUILD)
+            </button>
+          </div>
+
+          <!-- Interactive Station (Prep + Speed Rail + Backbar) -->
+          ${renderDrinkGameStation(modeState)}
+        </div>
+
+        <div class="quiz-actions">
+          <button class="action-btn" type="button" data-action="game-restart">Restart Shift</button>
+        </div>
+
+        ${renderDrinkGameModal(modeState)}
+      </section>
+    `;
+
+    updateActiveModeButtons();
+    return;
+  }
+
+  // STAGE 2: Garnish Stage
+  if (modeState.gameStage === 'garnish') {
+    const garnishButtonsMarkup = DEFAULT_GARNISH_OPTIONS.map((garnish) => {
+      const isSelected = modeState.gameSelectedGarnishes.includes(garnish);
+      return `
+        <button class="answer-btn game-choice-btn ${isSelected ? 'selected' : ''}" type="button" data-action="game-toggle-garnish" data-garnish="${escapeAttribute(garnish)}">
+          ${isSelected ? '✅ ' : ''}${escapeHtml(garnish)}
+        </button>
+      `;
+    }).join('');
+
+    const errorMessageMarkup = modeState.gameErrorMessage
+      ? `<div class="game-error-toast">⚠️ ${escapeHtml(modeState.gameErrorMessage)}</div>`
+      : '';
+
+    mainContainer.innerHTML = `
+      <section class="quiz-view">
+        <div class="quiz-header">
+          <button class="back-btn" type="button" data-action="back">Back</button>
+          <h2>${escapeHtml(mode.label)}</h2>
+        </div>
+
+        <div class="quiz-card drink-game-card">
+          <div class="ticket-status-bar">
+            <div class="status-item"><span class="status-label">Lives:</span><span class="heart-lives">${hearts}</span></div>
+            <div class="status-item"><span class="status-label">Score:</span><span>${modeState.gameScore} PTS</span></div>
+            <div class="status-item streak-badge"><span>🔥 ${modeState.gameStreak}</span></div>
+            <div class="status-item high-score-text"><span>🏆 Best: ${highScore}</span></div>
+          </div>
+
+          <div class="ticket-container">
+            <span class="ticket-header-tag">GARNISH SECTION</span>
+            <p class="ticket-prompt">Add Garnishes for: <strong>${escapeHtml(ticket.drinkName)}</strong></p>
+          </div>
+
+          ${errorMessageMarkup}
+
+          <div class="game-choice-grid">
+            ${garnishButtonsMarkup}
+          </div>
+
+          <button class="action-btn game-serve-btn" type="button" data-action="game-serve-drink">
+            🥂 SERVE DRINK TO GUEST
+          </button>
+        </div>
+
+        <div class="quiz-actions">
+          <button class="action-btn" type="button" data-action="game-restart">Restart Shift</button>
+        </div>
+      </section>
+    `;
+
+    updateActiveModeButtons();
+    return;
+  }
+
+  // STAGE 3: Complete / Drink Served Stage
+  if (modeState.gameStage === 'complete') {
+    mainContainer.innerHTML = `
+      <section class="quiz-view">
+        <div class="quiz-header">
+          <button class="back-btn" type="button" data-action="back">Back</button>
+          <h2>${escapeHtml(mode.label)}</h2>
+        </div>
+
+        <div class="quiz-card drink-game-card game-complete-card">
+          <p class="quiz-counter">ORDER SERVED!</p>
+          <h3 class="game-complete-title">✨ ${escapeHtml(ticket.drinkName)} Served!</h3>
+          <div class="completed-drink-img-placeholder">
+            <span class="game-placeholder-icon">🍸</span>
+            <p><strong>Perfect Pour!</strong></p>
+          </div>
+          <p class="feedback correct">+250 PTS (Order Ticket Completed!)</p>
+        </div>
+
+        <div class="quiz-actions">
+          <button class="action-btn" type="button" data-action="game-next-ticket">Next Ticket -></button>
+        </div>
+      </section>
+    `;
+
+    updateActiveModeButtons();
+    return;
+  }
+}
+
+function renderDrinkGameCompletion(mode, modeState) {
+  const isNewHighScore = checkAndSaveHighScore(modeState.gameScore);
+  const highScore = getHighScore();
+  const ticketCount = modeState.gameTickets.length;
+  const correctCount = Object.values(modeState.cardResults || {}).filter(Boolean).length;
+  const accuracy = ticketCount > 0 ? Math.round((correctCount / ticketCount) * 100) : 0;
+
+  let rankTitle = '🧊 Barback in Training';
+  if (modeState.gameScore >= 1500) rankTitle = '🔥 Master Mixologist';
+  else if (modeState.gameScore >= 1000) rankTitle = '🍸 Head Bartender';
+  else if (modeState.gameScore >= 600) rankTitle = '🍷 Senior Bartender';
+  else if (modeState.gameScore >= 300) rankTitle = '🍺 Bartender';
+
+  const isGameOverByHearts = modeState.gameLives <= 0;
+  const headline = isGameOverByHearts ? 'Out of Hearts!' : 'Service Rush Complete!';
+
+  mainContainer.innerHTML = `
+    <section class="quiz-view">
+      <div class="quiz-header">
+        <button class="back-btn" type="button" data-action="back">Back</button>
+        <h2>${escapeHtml(mode.label)}</h2>
+      </div>
+      <div class="quiz-card drink-game-card game-complete-card">
+        <p class="quiz-counter">${isGameOverByHearts ? 'Shift Ended Early' : 'Shift Complete'}</p>
+        <h3 class="game-complete-title">${headline}</h3>
+        ${isNewHighScore ? '<div class="new-high-score-banner">🏆 New High Score!</div>' : ''}
+        <div class="final-score-display">${modeState.gameScore} PTS</div>
+        <div class="rank-badge">${rankTitle}</div>
+
+        <div class="game-stats-summary">
+          <span>Orders Fulfilled: ${correctCount} / ${ticketCount} (${accuracy}%)</span>
+          <span>Max Streak: 🔥 ${modeState.gameMaxStreak}</span>
+          <span>Personal Best: 🏆 ${highScore} PTS</span>
+        </div>
+      </div>
+      <div class="quiz-actions">
+        <button class="action-btn" type="button" data-action="game-restart">Start New Shift</button>
+        <button class="action-btn" type="button" data-action="menu">Back to Main Menu</button>
+      </div>
+    </section>
+  `;
+
+  updateActiveModeButtons();
+}
+
 function resolveBottleRecognitionImage(card, index) {
   const configuredImage = String(card?.image || '').trim();
-  const configuredName = getFileName(configuredImage);
 
-  if (configuredImage && configuredName.startsWith(BOTTLE_RECOGNITION_PREFIX)) {
-    return configuredImage;
+  if (configuredImage) {
+    return normalizeImagePath(configuredImage);
   }
 
   if (BOTTLE_RECOGNITION_IMAGES.length) {
