@@ -122,51 +122,62 @@ const DEFAULT_OUNCE_OPTIONS = ['.25 oz', '.5 oz', '.75 oz', '1 oz', '1.25 oz', '
 
 // Configurable bottle layout based on reference diagram (Speed Rail + Backbar Grid)
 const DRINK_GAME_BOTTLE_LAYOUT = [
-  // Speed rail (bottom row 1-17)
-  { id: 'b1', name: 'Rivi Gin', row: 'rail', col: 1 },
-  { id: 'b2', name: 'Wheatley Vodka', row: 'rail', col: 2 },
-  { id: 'b3', name: 'Corazon Tequila', row: 'rail', col: 3 },
-  { id: 'b4', name: 'Cincoro Reposado', row: 'rail', col: 4 },
-  { id: 'b5', name: 'Sazerac Rye', row: 'rail', col: 5 },
-  { id: 'b6', name: 'Campari', row: 'rail', col: 6 },
-  { id: 'b7', name: 'Sweet Vermouth', row: 'rail', col: 7 },
-  { id: 'b8', name: 'Dry Vermouth', row: 'rail', col: 8 },
-  { id: 'b9', name: 'Triple Sec', row: 'rail', col: 9 },
-  { id: 'b10', name: 'Gran Gala', row: 'rail', col: 10 },
-  { id: 'b11', name: 'Lychee Syrup', row: 'rail', col: 11 },
-  { id: 'b12', name: 'Lemon Juice', row: 'rail', col: 12 },
-  { id: 'b13', name: 'Pomegranate Juice', row: 'rail', col: 13 },
-  { id: 'b14', name: 'Bloody Mary Mix', row: 'rail', col: 14 },
-  { id: 'b15', name: 'Olive Brine', row: 'rail', col: 15 },
-  { id: 'b16', name: 'Angostura Bitters', row: 'rail', col: 16 },
-  { id: 'b17', name: 'The Critic Cabernet', row: 'rail', col: 17 },
-  // Backbar tier 1 (top right row 1)
-  { id: 'b18', name: 'Patron Tequila', row: 'top', col: 1 },
-  { id: 'b19', name: 'Don Julio', row: 'top', col: 2 },
-  { id: 'b20', name: 'Tito\'s Vodka', row: 'top', col: 3 },
-  { id: 'b21', name: 'Ketel One', row: 'top', col: 4 },
-  { id: 'b22', name: 'Grey Goose', row: 'top', col: 5 },
-  { id: 'b23', name: 'Hendrick\'s Gin', row: 'top', col: 6 },
-  // Backbar tier 2
-  { id: 'b24', name: 'Casamigos Blanco', row: 'mid1', col: 1 },
-  { id: 'b25', name: 'Woodford Reserve', row: 'mid1', col: 2 },
-  { id: 'b26', name: 'Maker\'s Mark', row: 'mid1', col: 3 },
-  { id: 'b27', name: 'Jameson', row: 'mid1', col: 4 },
-  { id: 'b28', name: 'Bacardi Rum', row: 'mid1', col: 5 },
-  { id: 'b29', name: 'Captain Morgan', row: 'mid1', col: 6 },
-  // Backbar tier 3
-  { id: 'b30', name: 'Aperol', row: 'mid2', col: 1 },
-  { id: 'b31', name: 'Kahlua', row: 'mid2', col: 2 },
-  { id: 'b32', name: 'Baileys', row: 'mid2', col: 3 },
-  { id: 'b33', name: 'Disaronno', row: 'mid2', col: 4 },
-  { id: 'b34', name: 'Grand Marnier', row: 'mid2', col: 5 },
-  { id: 'b35', name: 'St Germain', row: 'mid2', col: 6 },
-  // Backbar tier 4 (5 bottles)
-  { id: 'b36', name: 'Absolut Vodka', row: 'mid3', col: 1 },
-  { id: 'b37', name: 'Tanqueray', row: 'mid3', col: 2 },
-  { id: 'b38', name: 'Crown Royal', row: 'mid3', col: 3 },
-  { id: 'b39', name: 'Jack Daniel\'s', row: 'mid3', col: 4 },
-  { id: 'b40', name: 'Hennessy', row: 'mid3', col: 5 }
+  // Speed rail (bottom row, left to right)
+  { id: 'b2', name: 'Wheatley Vodka', row: 'rail', col: 1 },
+  { id: 'b1', name: 'Rivi Gin', row: 'rail', col: 2 },
+  { id: 'b3', name: 'Corazon Tequila (Spicy)', row: 'rail', col: 3 },
+  { id: 'b10', name: 'Gran Gala', row: 'rail', col: 4 },
+  { id: 'b3b', name: 'Corazon Tequila', row: 'rail', col: 5 },
+  { id: 'b4', name: 'Cincoro Reposado', row: 'rail', col: 6 },
+  { id: 'b5', name: 'Sazerac Rye', row: 'rail', col: 7 },
+  { id: 'b41', name: 'Lime Juice', row: 'rail', col: 8 },
+  { id: 'b42', name: 'Simple Syrup', row: 'rail', col: 9 },
+  { id: 'b12', name: 'Lemon Juice', row: 'rail', col: 10 },
+  // Mixer block (two rows, above the rail, left side)
+  { id: 'b11', name: 'Cranberry Juice', row: 'mixer1', col: 1 },
+  { id: 'b43', name: 'Blue Simple Syrup', row: 'mixer1', col: 2 },
+  { id: 'b13', name: 'Pomegranate Juice', row: 'mixer1', col: 3 },
+  { id: 'b44', name: 'Agave', row: 'mixer1', col: 4 },
+  { id: 'b45', name: '5 Spice', row: 'mixer1', col: 5 },
+  { id: 'b15', name: 'Olive Brine', row: 'mixer2', col: 1 },
+  { id: 'b46', name: 'Pineapple Juice', row: 'mixer2', col: 2 },
+  { id: 'b47', name: 'Lychee Syrup', row: 'mixer2', col: 3 },
+  { id: 'b48', name: 'Blk Tea Simple', row: 'mixer2', col: 4 },
+  // Side Well tier 1 (top row, 6 bottles)
+  { id: 'b18', name: 'Tinkerman\'s', row: 'sidewell1', col: 1 },
+  { id: 'b19', name: 'Bombay Sapphire', row: 'sidewell1', col: 2 },
+  { id: 'b20', name: 'Tanqueray', row: 'sidewell1', col: 3 },
+  { id: 'b21', name: 'Hendrick\'s', row: 'sidewell1', col: 4 },
+  { id: 'b22', name: 'Blank', row: 'sidewell1', col: 5 },
+  { id: 'b23', name: 'Toki Whisky', row: 'sidewell1', col: 6 },
+  // Side Well tier 2 (6 bottles)
+  { id: 'b24', name: 'Domaine de Canton', row: 'sidewell2', col: 1 },
+  { id: 'b25', name: 'Aperol', row: 'sidewell2', col: 2 },
+  { id: 'b26', name: 'Campari', row: 'sidewell2', col: 3 },
+  { id: 'b27', name: 'Tia Maria', row: 'sidewell2', col: 4 },
+  { id: 'b28', name: 'Benchmark', row: 'sidewell2', col: 5 },
+  { id: 'b29', name: 'Fernet Branca', row: 'sidewell2', col: 6 },
+  // Side Well tier 3 (6 bottles)
+  { id: 'b30', name: 'Bacardi', row: 'sidewell3', col: 1 },
+  { id: 'b31', name: 'Orgeat', row: 'sidewell3', col: 2 },
+  { id: 'b32', name: 'Myers\'s Dark', row: 'sidewell3', col: 3 },
+  { id: 'b33', name: 'Don Q', row: 'sidewell3', col: 4 },
+  { id: 'b34', name: 'Captain Morgan', row: 'sidewell3', col: 5 },
+  { id: 'b35', name: 'Montenegro', row: 'sidewell3', col: 6 },
+  // Side Well tier 4 (5 bottles)
+  { id: 'b36', name: 'Tito\'s', row: 'sidewell4', col: 1 },
+  { id: 'b37', name: 'Ketel One', row: 'sidewell4', col: 2 },
+  { id: 'b38', name: 'Grey Goose', row: 'sidewell4', col: 3 },
+  { id: 'b39', name: 'Belvedere', row: 'sidewell4', col: 4 },
+  { id: 'b40', name: 'Wheatley (Citrus)', row: 'sidewell4', col: 5 },
+  // Side Well tier 5 (7 bottles)
+  { id: 'b14', name: 'Sweet Vermouth', row: 'sidewell5', col: 1 },
+  { id: 'b6', name: 'Dry Vermouth', row: 'sidewell5', col: 2 },
+  { id: 'b7', name: 'Cointreau', row: 'sidewell5', col: 3 },
+  { id: 'b8', name: 'St. Germain', row: 'sidewell5', col: 4 },
+  { id: 'b9', name: 'Los Vecinos', row: 'sidewell5', col: 5 },
+  { id: 'b16', name: 'Lillet', row: 'sidewell5', col: 6 },
+  { id: 'b17', name: 'Dry Curaçao', row: 'sidewell5', col: 7 }
 ];
 
 function createModeState() {
@@ -536,7 +547,7 @@ function bindEvents() {
       // Mix (Complete Ingredients Stage)
       if (button.dataset.action === 'game-mix-build') {
         const ticket = modeState.gameTickets[modeState.gameTicketIndex];
-        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name === ticket?.drinkName);
+        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name.toLowerCase() === (ticket?.drinkName || '').toLowerCase());
 
         // Validate Glass, Ice, Tool, and Ingredients
         let errors = [];
@@ -598,7 +609,7 @@ function bindEvents() {
       // Serve Drink
       if (button.dataset.action === 'game-serve-drink') {
         const ticket = modeState.gameTickets[modeState.gameTicketIndex];
-        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name === ticket?.drinkName);
+        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name.toLowerCase() === (ticket?.drinkName || '').toLowerCase());
 
         let garnishError = false;
         if (drinkProfile && drinkProfile.garnishes && drinkProfile.garnishes.length > 0) {
@@ -1957,6 +1968,33 @@ function getOrBuildDrinkGameTickets(modeState, modes) {
   return modeState.gameTickets;
 }
 
+// Renders a CSS-drawn glass silhouette matching the given glass type (falls back to a rocks glass shape).
+function getGlassIconMarkup(glassName) {
+  const normalized = String(glassName || '').toLowerCase();
+  let shape = 'rocks';
+  if (normalized.includes('martini')) shape = 'martini';
+  else if (normalized.includes('collins')) shape = 'collins';
+  else if (normalized.includes('coupe')) shape = 'coupe';
+  else if (normalized.includes('highball')) shape = 'highball';
+  else if (normalized.includes('rocks')) shape = 'rocks';
+
+  if (shape === 'martini' || shape === 'coupe') {
+    return `
+      <span class="glass-icon glass-icon-${shape}">
+        <span class="glass-bowl"></span>
+        <span class="glass-stem"></span>
+        <span class="glass-base"></span>
+      </span>
+    `;
+  }
+
+  return `
+    <span class="glass-icon glass-icon-${shape}">
+      <span class="glass-bowl"></span>
+    </span>
+  `;
+}
+
 function renderDrinkGameModal(modeState) {
   if (!modeState.gameActiveModal) return '';
 
@@ -1965,7 +2003,7 @@ function renderDrinkGameModal(modeState) {
   if (modalType === 'glass') {
     const glassOptionsMarkup = DEFAULT_GLASS_OPTIONS.map((glass) => `
       <button class="answer-btn game-modal-option-btn" type="button" data-action="game-select-glass" data-value="${escapeAttribute(glass)}">
-        <span class="game-placeholder-icon">🍸</span>
+        ${getGlassIconMarkup(glass)}
         <span>${escapeHtml(glass)}</span>
       </button>
     `).join('');
@@ -2073,14 +2111,17 @@ function renderDrinkGameModal(modeState) {
 
 function renderDrinkGameStation(modeState) {
   const railBottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'rail');
-  const topBottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'top');
-  const mid1Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mid1');
-  const mid2Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mid2');
-  const mid3Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mid3');
+  const mixer1Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mixer1');
+  const mixer2Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mixer2');
+  const sidewell1Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'sidewell1');
+  const sidewell2Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'sidewell2');
+  const sidewell3Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'sidewell3');
+  const sidewell4Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'sidewell4');
+  const sidewell5Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'sidewell5');
 
   const renderBottleCircles = (bottles) => bottles.map((b) => `
     <button class="station-bottle-circle" type="button" data-action="game-click-bottle" data-bottle-name="${escapeAttribute(b.name)}" title="${escapeAttribute(b.name)}">
-      <span class="circle-icon">⭕</span>
+      <span class="bottle-icon"></span>
       <span class="circle-label">${escapeHtml(b.name)}</span>
     </button>
   `).join('');
@@ -2089,7 +2130,7 @@ function renderDrinkGameStation(modeState) {
     <div class="interactive-station-container">
       <div class="station-prep-controls">
         <button class="station-prep-btn ${modeState.gameSelectedGlass ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="glass">
-          <span class="prep-icon">🍸</span>
+          ${getGlassIconMarkup(modeState.gameSelectedGlass)}
           <span class="prep-text">${escapeHtml(modeState.gameSelectedGlass || 'GLASS')}</span>
         </button>
         <button class="station-prep-btn ${modeState.gameSelectedIce ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="ice">
@@ -2103,15 +2144,27 @@ function renderDrinkGameStation(modeState) {
       </div>
 
       <div class="station-grid-layout">
-        <!-- Backbar Shelf -->
-        <div class="backbar-shelf-area">
-          <div class="backbar-row">${renderBottleCircles(topBottles)}</div>
-          <div class="backbar-row">${renderBottleCircles(mid1Bottles)}</div>
-          <div class="backbar-row">${renderBottleCircles(mid2Bottles)}</div>
-          <div class="backbar-row">${renderBottleCircles(mid3Bottles)}</div>
+        <!-- Upper Shelf: Mixer block (left) + Side Well (left, divided) -->
+        <div class="upper-shelf-row">
+          <div class="mixer-shelf-area">
+            <span class="mixer-label">MIXERS</span>
+            <div class="mixer-row">${renderBottleCircles(mixer1Bottles)}</div>
+            <div class="mixer-row">${renderBottleCircles(mixer2Bottles)}</div>
+          </div>
+
+          <div class="shelf-divider"></div>
+
+          <div class="sidewell-shelf-area">
+            <span class="sidewell-label">SIDE WELL</span>
+            <div class="sidewell-row">${renderBottleCircles(sidewell1Bottles)}</div>
+            <div class="sidewell-row">${renderBottleCircles(sidewell2Bottles)}</div>
+            <div class="sidewell-row">${renderBottleCircles(sidewell3Bottles)}</div>
+            <div class="sidewell-row">${renderBottleCircles(sidewell4Bottles)}</div>
+            <div class="sidewell-row">${renderBottleCircles(sidewell5Bottles)}</div>
+          </div>
         </div>
 
-        <!-- Speed Rail (Bottom Row) -->
+        <!-- Speed Rail (Bottom Row, full width) -->
         <div class="speedrail-area">
           <span class="rail-label">SPEED RAIL</span>
           <div class="speedrail-row">${renderBottleCircles(railBottles)}</div>
@@ -2160,7 +2213,7 @@ function renderDrinkGame(mode) {
       : '';
 
     mainContainer.innerHTML = `
-      <section class="quiz-view">
+      <section class="quiz-view drink-game-view">
         <div class="quiz-header">
           <button class="back-btn" type="button" data-action="back">Back</button>
           <h2>${escapeHtml(mode.label)}</h2>

@@ -163,6 +163,10 @@ select {
   text-align: center;
 }
 
+.quiz-view.drink-game-view {
+  width: min(1400px, 98%);
+}
+
 .mode-menu h2,
 .quiz-view h2 {
   font-size: 1.8rem;
@@ -1018,6 +1022,18 @@ html[data-theme="cyberpunk"] .mode-btn-header {
     padding: 8px 10px;
     font-size: 0.84rem;
   }
+
+  .bottle-card {
+    gap: 12px;
+  }
+
+  .bottle-image-panel {
+    max-height: min(32vh, 240px);
+  }
+
+  .choice-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* Interactive Station Styles */
@@ -1068,26 +1084,76 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 .station-grid-layout {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 18px;
+  gap: 28px;
+  padding: 24px;
   background: rgba(15, 12, 10, 0.7);
   border: 2px solid color-mix(in srgb, var(--border-color) 80%, transparent 20%);
   border-radius: 6px;
   box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+  overflow-x: auto;
 }
 
-/* Backbar Shelf */
-.backbar-shelf-area {
+/* Upper shelf: mixer block hugs left, side well hugs right */
+.upper-shelf-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+/* Mixer Block */
+.mixer-shelf-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  align-self: flex-end;
+}
+
+.mixer-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  text-align: left;
+}
+
+.mixer-row {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 18px;
+}
+
+/* Divider between Mixers and Side Well */
+.shelf-divider {
+  align-self: stretch;
+  width: 2px;
+  background: color-mix(in srgb, var(--border-color) 70%, transparent 30%);
+  margin: 4px 4px;
+}
+
+/* Side Well Shelf */
+.sidewell-shelf-area {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 12px;
+  gap: 18px;
 }
 
-.backbar-row {
+.sidewell-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  text-align: left;
+}
+
+.sidewell-row {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 22px;
   flex-wrap: wrap;
 }
 
@@ -1095,8 +1161,8 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 .speedrail-area {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
+  gap: 10px;
+  padding: 16px;
   background: rgba(0, 0, 0, 0.5);
   border-top: 3px double var(--mode-accent, #d35400);
   border-radius: 4px;
@@ -1114,7 +1180,7 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 8px;
+  gap: 14px;
 }
 
 /* Circular Bottle Items */
@@ -1123,7 +1189,7 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 48px;
+  width: 68px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -1131,27 +1197,138 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 }
 
 .station-bottle-circle:hover {
-  transform: scale(1.18);
+  transform: scale(1.15);
 }
 
-.circle-icon {
-  font-size: 1.6rem;
-  line-height: 1;
-  color: var(--text-color);
+/* CSS-drawn liquor bottle silhouette (cap + neck/shoulder/body + label + shine) */
+.bottle-icon {
+  position: relative;
+  display: block;
+  width: 26px;
+  height: 44px;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 32%),
+    linear-gradient(160deg, var(--primary-bright), var(--accent-color) 55%, var(--primary-color));
+  clip-path: polygon(40% 6%, 60% 6%, 60% 22%, 84% 36%, 84% 97%, 16% 97%, 16% 36%, 40% 22%);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
+.bottle-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 37%;
+  width: 26%;
+  height: 9%;
+  background: color-mix(in srgb, var(--primary-color) 60%, #000 40%);
+  border-radius: 1px;
+}
+
+.bottle-icon::after {
+  content: '';
+  position: absolute;
+  top: 56%;
+  left: 16%;
+  width: 68%;
+  height: 24%;
+  background: rgba(255, 255, 255, 0.88);
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* CSS-drawn cocktail glass silhouettes (bowl + optional stem/base) */
+.glass-icon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 30px;
+  height: 34px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+}
+
+.glass-bowl {
+  display: block;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.55), var(--accent-color) 45%, var(--primary-color));
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.glass-stem {
+  display: block;
+  width: 3px;
+  background: var(--primary-color);
+}
+
+.glass-base {
+  display: block;
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+.glass-icon-rocks {
+  height: 26px;
+}
+
+.glass-icon-rocks .glass-bowl {
+  width: 27px;
+  height: 22px;
+  clip-path: polygon(10% 0%, 90% 0%, 84% 100%, 16% 100%);
+}
+
+.glass-icon-highball .glass-bowl {
+  width: 20px;
+  height: 32px;
+  clip-path: polygon(12% 0%, 88% 0%, 82% 100%, 18% 100%);
+}
+
+.glass-icon-collins .glass-bowl {
+  width: 16px;
+  height: 34px;
+  clip-path: polygon(14% 0%, 86% 0%, 80% 100%, 20% 100%);
+}
+
+.glass-icon-martini .glass-bowl {
+  width: 30px;
+  height: 18px;
+  clip-path: polygon(0% 0%, 100% 0%, 53% 100%, 47% 100%);
+}
+
+.glass-icon-martini .glass-stem {
+  height: 10px;
+}
+
+.glass-icon-martini .glass-base {
+  width: 18px;
+  height: 3px;
+}
+
+.glass-icon-coupe .glass-bowl {
+  width: 28px;
+  height: 13px;
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+}
+
+.glass-icon-coupe .glass-stem {
+  height: 12px;
+}
+
+.glass-icon-coupe .glass-base {
+  width: 20px;
+  height: 3px;
+}
+
 .circle-label {
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--text-color);
   text-align: center;
-  margin-top: 3px;
-  max-width: 52px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0.85;
+  margin-top: 4px;
+  max-width: 78px;
+  white-space: normal;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  opacity: 0.9;
 }
 
 /* Mixing Vessel Summary Panel */
@@ -1476,19 +1653,6 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   text-transform: uppercase;
   border-radius: 20px;
   box-shadow: 0 0 10px rgba(241, 196, 15, 0.6);
-}
-
-  .bottle-card {
-    gap: 12px;
-  }
-
-  .bottle-image-panel {
-    max-height: min(32vh, 240px);
-  }
-
-  .choice-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (orientation: portrait) and (max-width: 480px) {
