@@ -114,11 +114,84 @@ const ALCOHOL_TYPE_FAMILIES = {
   'Sparkling Wine': 'sparkling-wine'
 };
 
-const DEFAULT_GLASS_OPTIONS = ['Rocks Glass', 'Martini Glass', 'Collins Glass', 'Coupe Glass', 'Highball Glass'];
+const DEFAULT_GLASS_OPTIONS = ['Rocks Glass', 'Martini Glass', 'Collins Glass', 'Coupe Glass', 'Highball Glass', 'Wine Glass', 'Pint Glass'];
 const DEFAULT_ICE_OPTIONS = ['No Ice (Neat/Up)', 'Cubed Ice', 'Crushed Ice', 'Large Cube'];
 const DEFAULT_TOOL_OPTIONS = ['Mixing Glass (Stir)', 'Cocktail Shaker (Shake)', 'Build in Glass'];
-const DEFAULT_GARNISH_OPTIONS = ['Dehydrated Lemon & Basil Sprig', 'Cherry', 'Orange Twist', 'Olive', 'Pickled Carrot', 'Lime Wheel', 'Cucumber Ribbon', 'Mint Sprig', 'Chili'];
-const DEFAULT_OUNCE_OPTIONS = ['.25 oz', '.5 oz', '.75 oz', '1 oz', '1.25 oz', '1.5 oz', '1.75 oz', '2 oz', '2.5 oz', '3 oz', '4 oz', '5 oz'];
+const DEFAULT_GARNISH_OPTIONS = ['Dehydrated Lemon', 'Basil Sprig', 'Cherry', 'Orange Twist', 'Orange Slice', 'Olive', 'Pickled Carrot', 'Lime Wheel', 'Chili', 'Grapefruit Slice', 'Pineapple Frond', 'Dehydrated Lime', 'Jalapeno Slice', 'Flower'];
+
+// Recipes may list combined garnishes like "X & Y" — split those into separately-pickable parts.
+function expandGarnishNames(list) {
+  return (Array.isArray(list) ? list : [])
+    .flatMap((g) => String(g).split(/\s*&\s*/))
+    .map((g) => g.trim())
+    .filter(Boolean);
+}
+const DEFAULT_OUNCE_OPTIONS = ['.25 oz', '.5 oz', '.75 oz', '1 oz', '1.25 oz', '1.5 oz', '1.75 oz', '2 oz', '2.5 oz', '3 oz', 'Dashes', 'Float', 'Topped'];
+const DASH_OUNCE_OPTIONS = ['1 Dash', '2 Dashes', '3 Dashes', '4 Dashes', '1 to 2 Dashes', '2 to 3 Dashes', '3 to 4 Dashes'];
+
+// Approximate real-world bottle/liquid colors, keyed by bottle id (base, bright highlight, shadow accent)
+const BOTTLE_COLOR_MAP = {
+  b2: { base: '#cfd8dc', bright: '#ffffff', accent: '#90a4ae' }, // Wheatley Vodka
+  b1: { base: '#dce8d5', bright: '#ffffff', accent: '#a5c98c' }, // Rivi Gin
+  b3: { base: '#c0392b', bright: '#e74c3c', accent: '#922b21' }, // Corazon Tequila (Spicy)
+  b10: { base: '#e08e0b', bright: '#f5a623', accent: '#b8720a' }, // Gran Gala
+  b3b: { base: '#c98a2c', bright: '#e0a94a', accent: '#a8721f' }, // Corazon Tequila
+  b4: { base: '#b8752e', bright: '#d99a4e', accent: '#8f5a20' }, // Cincoro Reposado
+  b5: { base: '#7b3f14', bright: '#a85d24', accent: '#5c2e0d' }, // Sazerac Rye
+  b41: { base: '#8bc34a', bright: '#aed581', accent: '#689f38' }, // Lime Juice
+  b42: { base: '#f5f0e1', bright: '#ffffff', accent: '#e8dfc0' }, // Simple Syrup
+  b12: { base: '#f1c40f', bright: '#f9e076', accent: '#d4ac0d' }, // Lemon Juice
+  b49: { base: '#6b1420', bright: '#922b3e', accent: '#4a0e16' }, // Angostura Bitters
+  b51: { base: '#d9720c', bright: '#f0902c', accent: '#a85809' }, // Angostura Orange Bitters
+  b50: { base: '#a3172c', bright: '#c53a4e', accent: '#7a0f20' }, // Peychaud's Bitters
+  b45: { base: '#7a4a24', bright: '#9c6a3a', accent: '#573317' }, // 5 Spice
+  b11: { base: '#a3193c', bright: '#c73357', accent: '#7a1030' }, // Cranberry Juice
+  b43: { base: '#1565c0', bright: '#2196f3', accent: '#0d47a1' }, // Blue Simple Syrup
+  b13: { base: '#7a0e2c', bright: '#9c1e3f', accent: '#52091e' }, // Pomegranate Juice
+  b44: { base: '#d4a94a', bright: '#e8c477', accent: '#b08a34' }, // Agave
+  b15: { base: '#6b7a3a', bright: '#8a9a52', accent: '#4c5628' }, // Olive Brine
+  b46: { base: '#f2c81d', bright: '#f7db56', accent: '#d1a80f' }, // Pineapple Juice
+  b47: { base: '#f3c9d0', bright: '#fbe1e6', accent: '#e0a3ad' }, // Lychee Syrup
+  b48: { base: '#4a2f1e', bright: '#6b452c', accent: '#2f1c11' }, // Blk Tea Simple
+  b18: { base: '#cfe0c8', bright: '#eef7ea', accent: '#a9c79f' }, // Tinkerman's
+  b19: { base: '#1857a4', bright: '#2f7ad1', accent: '#103c73' }, // Bombay Sapphire
+  b20: { base: '#0b6e4f', bright: '#12996d', accent: '#074a35' }, // Tanqueray
+  b21: { base: '#123524', bright: '#1e4d34', accent: '#0a2115' }, // Hendrick's
+  b22: { base: '#8a8a8a', bright: '#aaaaaa', accent: '#666666' }, // Blank
+  b23: { base: '#c9922e', bright: '#e0ac4c', accent: '#a3711f' }, // Toki Whisky
+  b24: { base: '#c9862f', bright: '#e0a24f', accent: '#a06a20' }, // Domaine de Canton
+  b25: { base: '#e2711d', bright: '#f28c3c', accent: '#b85813' }, // Aperol
+  b26: { base: '#b0142a', bright: '#d4213b', accent: '#7d0e1e' }, // Campari
+  b27: { base: '#3b2415', bright: '#56341e', accent: '#24140b' }, // Tia Maria
+  b28: { base: '#9a5a1e', bright: '#bd7a34', accent: '#714012' }, // Benchmark
+  b29: { base: '#2b1a12', bright: '#43291b', accent: '#180d08' }, // Fernet Branca
+  b30: { base: '#e8e4d8', bright: '#fbf8ef', accent: '#c9c3ac' }, // Bacardi
+  b31: { base: '#f0dfc0', bright: '#f9eeda', accent: '#dcc79c' }, // Orgeat
+  b32: { base: '#4a2712', bright: '#6b3a1c', accent: '#2d160a' }, // Myers's Dark
+  b33: { base: '#e3c98a', bright: '#f0dcae', accent: '#c7a862' }, // Don Q
+  b34: { base: '#a5651f', bright: '#c9853a', accent: '#7a4712' }, // Captain Morgan
+  b35: { base: '#5c3417', bright: '#7d4a24', accent: '#38200d' }, // Montenegro
+  b36: { base: '#e6e9ec', bright: '#ffffff', accent: '#c5cbd1' }, // Tito's
+  b37: { base: '#dfe4e8', bright: '#f5f8fa', accent: '#b9c2c9' }, // Ketel One
+  b38: { base: '#b9d3e0', bright: '#d6ecf5', accent: '#8fb3c7' }, // Grey Goose
+  b39: { base: '#e3e7ea', bright: '#ffffff', accent: '#c2c9cf' }, // Belvedere
+  b40: { base: '#eef0c0', bright: '#f7f8de', accent: '#d8dc9a' }, // Wheatley (Citrus)
+  b14: { base: '#6e1626', bright: '#8f2438', accent: '#4a0e19' }, // Sweet Vermouth
+  b6: { base: '#e9dfa8', bright: '#f5eecb', accent: '#cdbf7e' }, // Dry Vermouth
+  b7: { base: '#c8401f', bright: '#e2602f', accent: '#9c3016' }, // Cointreau
+  b8: { base: '#e8d97a', bright: '#f3e9a0', accent: '#cbb94a' }, // St. Germain
+  b9: { base: '#8a5a2a', bright: '#a97a3f', accent: '#603d1a' }, // Los Vecinos
+  b16: { base: '#e8c96a', bright: '#f2dd94', accent: '#c9a643' }, // Lillet
+  b17: { base: '#b85a1a', bright: '#d47530', accent: '#8a4212' }, // Dry Curaçao
+  b52: { base: '#a9762e', bright: '#c9954c', accent: '#7d5620' }, // Q Ginger Beer
+  b53: { base: '#e8a33c', bright: '#f5bd63', accent: '#c17f24' }, // Q Grapefruit Soda
+  b54: { base: '#8a1a2c', bright: '#a8334a', accent: '#5c0f1c' }, // Bloody Mary Mix
+  b57: { base: '#6b8f3a', bright: '#8ab34f', accent: '#4a6427' }, // Matcha Syrup
+  b58: { base: '#3a2418', bright: '#54341f', accent: '#22150d' }, // Espresso
+  b59: { base: '#9c1a2e', bright: '#c53347', accent: '#6e0f1f' }, // Cherry Syrup
+  b60: { base: '#5c0f1c', bright: '#7d1c2c', accent: '#3d0a13' }, // Planet Oregon Pinot Noir
+  b61: { base: '#eee7c9', bright: '#f8f3e0', accent: '#d8cc9e' } // Beviamo Pinot Grigio
+};
 
 // Configurable bottle layout based on reference diagram (Speed Rail + Backbar Grid)
 const DRINK_GAME_BOTTLE_LAYOUT = [
@@ -133,12 +206,25 @@ const DRINK_GAME_BOTTLE_LAYOUT = [
   { id: 'b41', name: 'Lime Juice', row: 'rail', col: 8 },
   { id: 'b42', name: 'Simple Syrup', row: 'rail', col: 9 },
   { id: 'b12', name: 'Lemon Juice', row: 'rail', col: 10 },
+  // Sodas (left of the bitters)
+  { id: 'b52', name: 'Q Ginger Beer', row: 'sodas', col: 1 },
+  { id: 'b53', name: 'Q Grapefruit Soda', row: 'sodas', col: 2 },
+  // Bitters (above the mixer block, left side)
+  { id: 'b49', name: 'Angostura Bitters', row: 'bitters', col: 1 },
+  { id: 'b51', name: 'Angostura Orange Bitters', row: 'bitters', col: 2 },
+  { id: 'b50', name: 'Peychaud\'s Bitters', row: 'bitters', col: 3 },
+  { id: 'bitters-spacer1', name: '', row: 'bitters', col: 4, spacer: true },
+  { id: 'bitters-spacer2', name: '', row: 'bitters', col: 5, spacer: true },
+  { id: 'b45', name: '5 Spice', row: 'bitters', col: 6 },
+  { id: 'b54', name: 'Bloody Mary Mix', row: 'bitters', col: 7 },
+  { id: 'b57', name: 'Matcha Syrup', row: 'bitters', col: 8 },
+  { id: 'b58', name: 'Espresso', row: 'bitters', col: 9 },
+  { id: 'b59', name: 'Cherry Syrup', row: 'bitters', col: 10 },
   // Mixer block (two rows, above the rail, left side)
   { id: 'b11', name: 'Cranberry Juice', row: 'mixer1', col: 1 },
   { id: 'b43', name: 'Blue Simple Syrup', row: 'mixer1', col: 2 },
   { id: 'b13', name: 'Pomegranate Juice', row: 'mixer1', col: 3 },
   { id: 'b44', name: 'Agave', row: 'mixer1', col: 4 },
-  { id: 'b45', name: '5 Spice', row: 'mixer1', col: 5 },
   { id: 'b15', name: 'Olive Brine', row: 'mixer2', col: 1 },
   { id: 'b46', name: 'Pineapple Juice', row: 'mixer2', col: 2 },
   { id: 'b47', name: 'Lychee Syrup', row: 'mixer2', col: 3 },
@@ -177,7 +263,10 @@ const DRINK_GAME_BOTTLE_LAYOUT = [
   { id: 'b8', name: 'St. Germain', row: 'sidewell5', col: 4 },
   { id: 'b9', name: 'Los Vecinos', row: 'sidewell5', col: 5 },
   { id: 'b16', name: 'Lillet', row: 'sidewell5', col: 6 },
-  { id: 'b17', name: 'Dry Curaçao', row: 'sidewell5', col: 7 }
+  { id: 'b17', name: 'Dry Curaçao', row: 'sidewell5', col: 7 },
+  // Wine list view (Reds / Whites categories)
+  { id: 'b60', name: 'Planet Oregon Pinot Noir', row: 'wine-Reds', col: 1 },
+  { id: 'b61', name: 'Beviamo Pinot Grigio', row: 'wine-Whites', col: 1 }
 ];
 
 function createModeState() {
@@ -223,12 +312,16 @@ function createModeState() {
     gameSelectedIce: '',
     gameSelectedTool: '',
     gameAddedIngredients: [], // [{ name, oz }]
+    gameIngredientFeedback: [], // per-index 'correct' | 'incorrect', aligned to gameAddedIngredients
     gameSelectedGarnishes: [],
+    gameGarnishOrder: [],
     gameActiveModal: null, // null | 'glass' | 'ice' | 'tool' | 'bottle'
     gameActiveBottle: null,
     gameActiveOz: '.75 oz',
+    gameOzShowDashes: false,
     gameErrorMessage: '',
-    gameDrinkImage: ''
+    gameDrinkImage: '',
+    gameStationView: 'default' // 'default' | 'winelist'
   };
 }
 
@@ -273,6 +366,7 @@ function resetCardProgress(modeState) {
   modeState.gameActiveModal = null;
   modeState.gameActiveBottle = null;
   modeState.gameActiveOz = '.75 oz';
+  modeState.gameOzShowDashes = false;
   modeState.gameErrorMessage = '';
   modeState.gameDrinkImage = '';
 }
@@ -449,6 +543,14 @@ function bindEvents() {
     }
 
     if (isDrinkGameMode(currentMode)) {
+      // Switch Station View (default station <-> wine list)
+      if (button.dataset.action === 'game-station-view') {
+        modeState.gameStationView = String(button.dataset.view || 'default').trim();
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
       // Modal Open Triggers
       if (button.dataset.action === 'game-open-modal') {
         const modalType = String(button.dataset.modalType || '').trim();
@@ -503,6 +605,7 @@ function bindEvents() {
         const bottleName = String(button.dataset.bottleName || '').trim();
         modeState.gameActiveBottle = bottleName;
         modeState.gameActiveModal = 'bottle';
+        modeState.gameOzShowDashes = false;
         modeState.gameErrorMessage = '';
         state.flashcards[modeId] = modeState;
         renderView();
@@ -511,7 +614,20 @@ function bindEvents() {
 
       // Select Ounces in Bottle Modal
       if (button.dataset.action === 'game-select-oz') {
-        modeState.gameActiveOz = String(button.dataset.oz || '').trim();
+        const oz = String(button.dataset.oz || '').trim();
+        if (oz === 'Dashes') {
+          modeState.gameOzShowDashes = true;
+        } else {
+          modeState.gameActiveOz = oz;
+        }
+        state.flashcards[modeId] = modeState;
+        renderView();
+        return;
+      }
+
+      // Back Out of Dashes Sub-Menu
+      if (button.dataset.action === 'game-oz-back') {
+        modeState.gameOzShowDashes = false;
         state.flashcards[modeId] = modeState;
         renderView();
         return;
@@ -528,6 +644,7 @@ function bindEvents() {
         modeState.gameActiveModal = null;
         modeState.gameActiveBottle = null;
         modeState.gameErrorMessage = '';
+        modeState.gameIngredientFeedback = [];
         state.flashcards[modeId] = modeState;
         renderView();
         return;
@@ -539,6 +656,7 @@ function bindEvents() {
         if (!isNaN(index) && index >= 0 && index < modeState.gameAddedIngredients.length) {
           modeState.gameAddedIngredients.splice(index, 1);
         }
+        modeState.gameIngredientFeedback = [];
         state.flashcards[modeId] = modeState;
         renderView();
         return;
@@ -547,7 +665,9 @@ function bindEvents() {
       // Mix (Complete Ingredients Stage)
       if (button.dataset.action === 'game-mix-build') {
         const ticket = modeState.gameTickets[modeState.gameTicketIndex];
-        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name.toLowerCase() === (ticket?.drinkName || '').toLowerCase());
+        const drinkName = (ticket?.drinkName || '').toLowerCase();
+        const recipe = getDrinkRecipesFromModes(state.modes).find((r) => r.name.toLowerCase() === drinkName);
+        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name.toLowerCase() === drinkName);
 
         // Validate Glass, Ice, Tool, and Ingredients
         let errors = [];
@@ -555,7 +675,40 @@ function bindEvents() {
         if (!modeState.gameSelectedIce) errors.push('Please select ice!');
         if (!modeState.gameSelectedTool) errors.push('Please select a tool!');
 
-        if (drinkProfile) {
+        if (recipe) {
+          if (recipe.glass && modeState.gameSelectedGlass.toLowerCase() !== recipe.glass.toLowerCase()) {
+            errors.push(`Wrong Glass! Expected ${recipe.glass}.`);
+          }
+          if (recipe.ice && modeState.gameSelectedIce.toLowerCase() !== recipe.ice.toLowerCase()) {
+            errors.push(`Wrong Ice! Expected ${recipe.ice}.`);
+          }
+          if (recipe.tool && modeState.gameSelectedTool.toLowerCase() !== recipe.tool.toLowerCase()) {
+            errors.push(`Wrong Tool! Expected ${recipe.tool}.`);
+          }
+
+          // Validate required ingredients (name and amount must both match; "X or Y" names accept either;
+          // a generic varietal like "Pinot Noir" matches any bottle whose name contains that phrase, so brand doesn't matter)
+          const ingredientMatches = (added, req) => {
+            const reqNames = req.name.toLowerCase().split(/\s+or\s+/i).map((n) => n.trim());
+            const addedName = added.name.trim().toLowerCase();
+            const nameMatches = reqNames.some((reqName) => reqName === addedName || addedName.includes(reqName) || reqName.includes(addedName));
+            return nameMatches && added.oz.trim().toLowerCase() === req.oz.trim().toLowerCase();
+          };
+          const missing = (recipe.ingredients || []).filter((req) => {
+            return !modeState.gameAddedIngredients.some((added) => ingredientMatches(added, req));
+          });
+          const extra = modeState.gameAddedIngredients.filter((added) => {
+            return !(recipe.ingredients || []).some((req) => ingredientMatches(added, req));
+          });
+
+          if (missing.length > 0 || extra.length > 0) {
+            errors.push('Missing or incorrect ingredients! Check your mix.');
+          }
+
+          modeState.gameIngredientFeedback = modeState.gameAddedIngredients.map((added) => {
+            return extra.includes(added) ? 'incorrect' : 'correct';
+          });
+        } else if (drinkProfile) {
           if (drinkProfile.glass && modeState.gameSelectedGlass.toLowerCase() !== drinkProfile.glass.toLowerCase()) {
             errors.push(`Wrong Glass! Expected ${drinkProfile.glass}.`);
           }
@@ -564,15 +717,21 @@ function bindEvents() {
           }
 
           // Validate required ingredients
+          const requiredClean = (drinkProfile.ingredients || []).map((req) => cleanIngredientAnswer(req).toLowerCase());
           const userIngredientsClean = modeState.gameAddedIngredients.map((i) => i.name.toLowerCase());
-          const missing = (drinkProfile.ingredients || []).filter((req) => {
-            const reqClean = cleanIngredientAnswer(req).toLowerCase();
+          const missing = requiredClean.filter((reqClean) => {
             return !userIngredientsClean.some((u) => reqClean.includes(u) || u.includes(reqClean));
           });
 
           if (missing.length > 0) {
             errors.push(`Missing or incorrect ingredients! Check your mix.`);
           }
+
+          modeState.gameIngredientFeedback = modeState.gameAddedIngredients.map((added) => {
+            const addedClean = added.name.toLowerCase();
+            const matchesSome = requiredClean.some((reqClean) => reqClean.includes(addedClean) || addedClean.includes(reqClean));
+            return matchesSome ? 'correct' : 'incorrect';
+          });
         }
 
         if (errors.length > 0) {
@@ -584,6 +743,7 @@ function bindEvents() {
           }
         } else {
           modeState.gameErrorMessage = '';
+          modeState.gameIngredientFeedback = [];
           modeState.gameStage = 'garnish';
         }
 
@@ -609,11 +769,15 @@ function bindEvents() {
       // Serve Drink
       if (button.dataset.action === 'game-serve-drink') {
         const ticket = modeState.gameTickets[modeState.gameTicketIndex];
-        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name.toLowerCase() === (ticket?.drinkName || '').toLowerCase());
+        const drinkName = (ticket?.drinkName || '').toLowerCase();
+        const recipe = getDrinkRecipesFromModes(state.modes).find((r) => r.name.toLowerCase() === drinkName);
+        const drinkProfile = getDrinkProfilesFromModes(state.modes).find((d) => d.name.toLowerCase() === drinkName);
+        const requiredGarnishesRaw = (recipe && recipe.garnishes && recipe.garnishes.length > 0) ? recipe.garnishes : (drinkProfile?.garnishes || []);
+        const reqGarnishesDisplay = expandGarnishNames(requiredGarnishesRaw);
 
         let garnishError = false;
-        if (drinkProfile && drinkProfile.garnishes && drinkProfile.garnishes.length > 0) {
-          const reqGarnishes = drinkProfile.garnishes.map((g) => g.toLowerCase());
+        if (reqGarnishesDisplay.length > 0) {
+          const reqGarnishes = reqGarnishesDisplay.map((g) => g.toLowerCase());
           const selectedGarnishes = modeState.gameSelectedGarnishes.map((g) => g.toLowerCase());
           const isCorrect = reqGarnishes.length === selectedGarnishes.length && reqGarnishes.every((rg) => selectedGarnishes.some((sg) => sg.includes(rg) || rg.includes(sg)));
           if (!isCorrect) {
@@ -622,7 +786,7 @@ function bindEvents() {
         }
 
         if (garnishError) {
-          modeState.gameErrorMessage = `Incorrect garnish! Required: ${(drinkProfile.garnishes || []).join(', ')}`;
+          modeState.gameErrorMessage = `Incorrect garnish! Required: ${reqGarnishesDisplay.join(', ')}`;
           modeState.gameLives = Math.max(0, modeState.gameLives - 1);
           if (modeState.gameLives <= 0) {
             modeState.completed = true;
@@ -658,6 +822,7 @@ function bindEvents() {
           modeState.gameSelectedIce = '';
           modeState.gameSelectedTool = '';
           modeState.gameAddedIngredients = [];
+          modeState.gameIngredientFeedback = [];
           modeState.gameSelectedGarnishes = [];
           modeState.gameActiveModal = null;
           modeState.gameActiveBottle = null;
@@ -1321,14 +1486,38 @@ function normalizeMode(entry) {
     ? entry.items.map(normalizeItem).filter(Boolean)
     : [];
 
+  const recipes = Array.isArray(entry.recipes)
+    ? entry.recipes.map(normalizeRecipe).filter(Boolean)
+    : [];
+
   return {
     id: String(entry.id || 'mode').trim().toLowerCase(),
     label: entry.label || entry.title || 'Quiz Mode',
     description: entry.description || '',
     type: entry.type || 'flashcards',
     items,
+    recipes,
     samplePrompts: Array.isArray(entry.samplePrompts)
       ? entry.samplePrompts.filter((item) => typeof item === 'string' && item.trim())
+      : []
+  };
+}
+
+function normalizeRecipe(recipe) {
+  if (!recipe || typeof recipe !== 'object' || !recipe.name) return null;
+
+  return {
+    name: String(recipe.name),
+    glass: recipe.glass ? String(recipe.glass) : '',
+    ice: recipe.ice ? String(recipe.ice) : '',
+    tool: recipe.tool ? String(recipe.tool) : '',
+    ingredients: Array.isArray(recipe.ingredients)
+      ? recipe.ingredients
+        .filter((ing) => ing && ing.name)
+        .map((ing) => ({ name: String(ing.name), oz: String(ing.oz || '') }))
+      : [],
+    garnishes: Array.isArray(recipe.garnishes)
+      ? recipe.garnishes.filter((g) => typeof g === 'string' && g.trim())
       : []
   };
 }
@@ -1897,6 +2086,11 @@ function checkAndSaveHighScore(score) {
   return false;
 }
 
+function getDrinkRecipesFromModes(modes = []) {
+  const drinkGameMode = modes.find((m) => m.id === 'drinkgame' || m.type === 'drink-game');
+  return Array.isArray(drinkGameMode?.recipes) ? drinkGameMode.recipes : [];
+}
+
 function getDrinkProfilesFromModes(modes = []) {
   const flashcardMode = modes.find((m) => m.id === 'flashcards' || m.type === 'flashcards');
   const items = Array.isArray(flashcardMode?.items) ? flashcardMode.items : [];
@@ -1976,9 +2170,11 @@ function getGlassIconMarkup(glassName) {
   else if (normalized.includes('collins')) shape = 'collins';
   else if (normalized.includes('coupe')) shape = 'coupe';
   else if (normalized.includes('highball')) shape = 'highball';
+  else if (normalized.includes('wine')) shape = 'wine';
+  else if (normalized.includes('pint')) shape = 'pint';
   else if (normalized.includes('rocks')) shape = 'rocks';
 
-  if (shape === 'martini' || shape === 'coupe') {
+  if (shape === 'martini' || shape === 'coupe' || shape === 'wine') {
     return `
       <span class="glass-icon glass-icon-${shape}">
         <span class="glass-bowl"></span>
@@ -2072,17 +2268,25 @@ function renderDrinkGameModal(modeState) {
   if (modalType === 'bottle') {
     const bottleName = modeState.gameActiveBottle || 'Bottle';
     const currentOz = modeState.gameActiveOz || '.75 oz';
+    const showDashes = !!modeState.gameOzShowDashes;
 
-    const ozButtonsMarkup = DEFAULT_OUNCE_OPTIONS.map((oz) => `
-      <button class="answer-btn game-oz-btn ${currentOz === oz ? 'selected' : ''}" type="button" data-action="game-select-oz" data-oz="${escapeAttribute(oz)}">
-        ${escapeHtml(oz)}
-      </button>
-    `).join('');
+    const ozButtonsMarkup = showDashes
+      ? DASH_OUNCE_OPTIONS.map((oz) => `
+        <button class="answer-btn game-oz-btn ${currentOz === oz ? 'selected' : ''}" type="button" data-action="game-select-oz" data-oz="${escapeAttribute(oz)}">
+          ${escapeHtml(oz)}
+        </button>
+      `).join('')
+      : DEFAULT_OUNCE_OPTIONS.map((oz) => `
+        <button class="answer-btn game-oz-btn ${currentOz === oz ? 'selected' : ''}" type="button" data-action="game-select-oz" data-oz="${escapeAttribute(oz)}">
+          ${escapeHtml(oz)}
+        </button>
+      `).join('');
 
     return `
       <div class="modal active" id="gameModal" aria-hidden="false">
         <div class="modal-content">
           <div class="modal-header">
+            ${showDashes ? '<button class="back-btn game-oz-back-btn" type="button" data-action="game-oz-back">&larr; Back</button>' : ''}
             <h2>Pour: ${escapeHtml(bottleName)}</h2>
             <button class="close-btn" type="button" data-action="game-close-modal">&times;</button>
           </div>
@@ -2109,8 +2313,30 @@ function renderDrinkGameModal(modeState) {
   return '';
 }
 
+function renderStationPrepControls(modeState) {
+  return `
+    <div class="station-prep-controls">
+      <button class="station-prep-btn ${modeState.gameSelectedGlass ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="glass">
+        ${getGlassIconMarkup(modeState.gameSelectedGlass)}
+        <span class="prep-text">${escapeHtml(modeState.gameSelectedGlass || 'GLASS')}</span>
+      </button>
+      <button class="station-prep-btn ${modeState.gameSelectedIce ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="ice">
+        <span class="prep-icon">🧊</span>
+        <span class="prep-text">${escapeHtml(modeState.gameSelectedIce || 'ICE')}</span>
+      </button>
+      <button class="station-prep-btn ${modeState.gameSelectedTool ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="tool">
+        <span class="prep-icon">🥄</span>
+        <span class="prep-text">${escapeHtml(modeState.gameSelectedTool || 'TOOLS')}</span>
+      </button>
+    </div>
+  `;
+}
+
 function renderDrinkGameStation(modeState) {
   const railBottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'rail');
+  const sodaBottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'sodas');
+  const bittersBottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'bitters' && !b.spacer && !['b45', 'b54', 'b57', 'b58', 'b59'].includes(b.id)).reverse();
+  const bittersExtraBottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => ['b45', 'b54', 'b57', 'b58', 'b59'].includes(b.id));
   const mixer1Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mixer1');
   const mixer2Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'mixer2');
   const sidewell1Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'sidewell1');
@@ -2119,37 +2345,84 @@ function renderDrinkGameStation(modeState) {
   const sidewell4Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'sidewell4');
   const sidewell5Bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === 'sidewell5');
 
-  const renderBottleCircles = (bottles) => bottles.map((b) => `
+  const renderBottleCircles = (bottles) => bottles.map((b) => {
+    if (b.spacer) {
+      return '<span class="station-bottle-spacer"></span>';
+    }
+    const color = BOTTLE_COLOR_MAP[b.id];
+    const colorStyle = color ? `--bottle-base: ${color.base}; --bottle-bright: ${color.bright}; --bottle-accent: ${color.accent};` : '';
+    return `
     <button class="station-bottle-circle" type="button" data-action="game-click-bottle" data-bottle-name="${escapeAttribute(b.name)}" title="${escapeAttribute(b.name)}">
-      <span class="bottle-icon"></span>
+      <span class="bottle-icon" style="${escapeAttribute(colorStyle)}"></span>
       <span class="circle-label">${escapeHtml(b.name)}</span>
     </button>
-  `).join('');
+  `;
+  }).join('');
+
+  const stationViewButtons = `
+    <div class="station-view-toggle">
+      <button class="action-btn station-view-btn ${modeState.gameStationView !== 'winelist' ? 'selected' : ''}" type="button" data-action="game-station-view" data-view="default">
+        Reset Station
+      </button>
+      <button class="action-btn station-view-btn ${modeState.gameStationView === 'winelist' ? 'selected' : ''}" type="button" data-action="game-station-view" data-view="winelist">
+        Wine List
+      </button>
+    </div>
+  `;
+
+  if (modeState.gameStationView === 'winelist') {
+    const wineCategories = ['Reds', 'Whites', 'Rose', 'Bubbles', 'Sake'];
+    const categoriesMarkup = wineCategories.map((category) => {
+      const bottles = DRINK_GAME_BOTTLE_LAYOUT.filter((b) => b.row === `wine-${category}`);
+      return `
+      <div class="wine-category-area">
+        <span class="wine-category-label">${escapeHtml(category.toUpperCase())}</span>
+        <div class="wine-category-row">${renderBottleCircles(bottles)}</div>
+      </div>
+    `;
+    }).join('');
+
+    return `
+      <div class="interactive-station-container">
+        <div class="station-grid-layout">
+          <div class="wine-category-grid">${categoriesMarkup}</div>
+        </div>
+        ${stationViewButtons}
+      </div>
+    `;
+  }
 
   return `
     <div class="interactive-station-container">
-      <div class="station-prep-controls">
-        <button class="station-prep-btn ${modeState.gameSelectedGlass ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="glass">
-          ${getGlassIconMarkup(modeState.gameSelectedGlass)}
-          <span class="prep-text">${escapeHtml(modeState.gameSelectedGlass || 'GLASS')}</span>
-        </button>
-        <button class="station-prep-btn ${modeState.gameSelectedIce ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="ice">
-          <span class="prep-icon">🧊</span>
-          <span class="prep-text">${escapeHtml(modeState.gameSelectedIce || 'ICE')}</span>
-        </button>
-        <button class="station-prep-btn ${modeState.gameSelectedTool ? 'completed' : ''}" type="button" data-action="game-open-modal" data-modal-type="tool">
-          <span class="prep-icon">🥄</span>
-          <span class="prep-text">${escapeHtml(modeState.gameSelectedTool || 'TOOLS')}</span>
-        </button>
-      </div>
-
       <div class="station-grid-layout">
         <!-- Upper Shelf: Mixer block (left) + Side Well (left, divided) -->
         <div class="upper-shelf-row">
-          <div class="mixer-shelf-area">
-            <span class="mixer-label">MIXERS</span>
-            <div class="mixer-row">${renderBottleCircles(mixer1Bottles)}</div>
-            <div class="mixer-row">${renderBottleCircles(mixer2Bottles)}</div>
+          <div class="mixer-column">
+            <div class="bitters-top-row">
+              <div class="bitters-shelf-area">
+                <span class="bitters-label">BITTERS</span>
+                <div class="bitters-row">${renderBottleCircles(bittersBottles)}</div>
+              </div>
+
+              <div class="mixer-top-divider" style="height: ${16 + bittersBottles.length * 68 + Math.max(0, bittersBottles.length - 1) * 10}px;"></div>
+
+              <div class="soda-shelf-area">
+                <span class="soda-label">SODAS</span>
+                <div class="soda-row">${renderBottleCircles(sodaBottles)}</div>
+              </div>
+
+              <div class="bitters-extra-row">${renderBottleCircles(bittersExtraBottles)}</div>
+            </div>
+
+            <div class="station-empty-row"></div>
+            <div class="station-empty-row"></div>
+            <div class="mixer-column-divider"></div>
+
+            <div class="mixer-shelf-area">
+              <span class="mixer-label">MIXERS</span>
+              <div class="mixer-row">${renderBottleCircles(mixer1Bottles)}</div>
+              <div class="mixer-row">${renderBottleCircles(mixer2Bottles)}</div>
+            </div>
           </div>
 
           <div class="shelf-divider"></div>
@@ -2170,6 +2443,7 @@ function renderDrinkGameStation(modeState) {
           <div class="speedrail-row">${renderBottleCircles(railBottles)}</div>
         </div>
       </div>
+      ${stationViewButtons}
     </div>
   `;
 }
@@ -2200,12 +2474,16 @@ function renderDrinkGame(mode) {
   // STAGE 1: Prep & Build Stage
   if (modeState.gameStage === 'prep' || modeState.gameStage === 'build') {
     const ingredientsListMarkup = modeState.gameAddedIngredients.length > 0
-      ? modeState.gameAddedIngredients.map((item, idx) => `
-          <div class="game-added-ingredient-row">
+      ? modeState.gameAddedIngredients.map((item, idx) => {
+          const feedback = modeState.gameIngredientFeedback[idx];
+          const feedbackClass = feedback ? ` ingredient-${feedback}` : '';
+          return `
+          <div class="game-added-ingredient-row${feedbackClass}">
             <span>🔹 <strong>${escapeHtml(item.name)}</strong> - ${escapeHtml(item.oz)}</span>
             <button class="game-remove-ing-btn" type="button" data-action="game-remove-ingredient" data-index="${idx}">&times;</button>
           </div>
-        `).join('')
+        `;
+        }).join('')
       : `<p class="game-empty-list-text">No bottles poured yet. Click any bottle below to pour!</p>`;
 
     const errorMessageMarkup = modeState.gameErrorMessage
@@ -2217,14 +2495,28 @@ function renderDrinkGame(mode) {
         <div class="quiz-header">
           <button class="back-btn" type="button" data-action="back">Back</button>
           <h2>${escapeHtml(mode.label)}</h2>
+          <button class="action-btn" type="button" data-action="game-restart">Restart Shift</button>
         </div>
 
-        <div class="quiz-card drink-game-card">
-          <div class="ticket-status-bar">
-            <div class="status-item"><span class="status-label">Lives:</span><span class="heart-lives">${hearts}</span></div>
-            <div class="status-item"><span class="status-label">Score:</span><span>${modeState.gameScore} PTS</span></div>
-            <div class="status-item streak-badge"><span>🔥 ${modeState.gameStreak}</span></div>
-            <div class="status-item high-score-text"><span>🏆 Best: ${highScore}</span></div>
+        <div class="quiz-card drink-game-card game-build-stage">
+          <div class="game-side-panel">
+            <div class="ticket-status-bar">
+              <div class="status-item"><span class="status-label">Lives:</span><span class="heart-lives">${hearts}</span></div>
+              <div class="status-item"><span class="status-label">Score:</span><span>${modeState.gameScore} PTS</span></div>
+              <div class="status-item streak-badge"><span>🔥 ${modeState.gameStreak}</span></div>
+              <div class="status-item high-score-text"><span>🏆 Best: ${highScore}</span></div>
+            </div>
+
+            ${renderStationPrepControls(modeState)}
+
+            <!-- Current Mixer Contents Summary -->
+            <div class="game-vessel-summary-panel">
+              <h4>Mixer</h4>
+              <div class="vessel-ingredients-list">${ingredientsListMarkup}</div>
+              <button class="action-btn game-mix-btn" type="button" data-action="game-mix-build">
+                🥄 MIX (COMPLETE BUILD)
+              </button>
+            </div>
           </div>
 
           <div class="ticket-container">
@@ -2234,26 +2526,8 @@ function renderDrinkGame(mode) {
 
           ${errorMessageMarkup}
 
-          <!-- Current Mixing Vessel Contents Summary -->
-          <div class="game-vessel-summary-panel">
-            <h4>Mixing Vessel Contents</h4>
-            <div class="vessel-specs">
-              <span>Glass: <strong>${escapeHtml(modeState.gameSelectedGlass || 'None')}</strong></span> |
-              <span>Ice: <strong>${escapeHtml(modeState.gameSelectedIce || 'None')}</strong></span> |
-              <span>Tool: <strong>${escapeHtml(modeState.gameSelectedTool || 'None')}</strong></span>
-            </div>
-            <div class="vessel-ingredients-list">${ingredientsListMarkup}</div>
-            <button class="action-btn game-mix-btn" type="button" data-action="game-mix-build">
-              🥄 MIX (COMPLETE BUILD)
-            </button>
-          </div>
-
-          <!-- Interactive Station (Prep + Speed Rail + Backbar) -->
+          <!-- Interactive Station (Speed Rail + Backbar) -->
           ${renderDrinkGameStation(modeState)}
-        </div>
-
-        <div class="quiz-actions">
-          <button class="action-btn" type="button" data-action="game-restart">Restart Shift</button>
         </div>
 
         ${renderDrinkGameModal(modeState)}
@@ -2284,6 +2558,7 @@ function renderDrinkGame(mode) {
         <div class="quiz-header">
           <button class="back-btn" type="button" data-action="back">Back</button>
           <h2>${escapeHtml(mode.label)}</h2>
+          <button class="action-btn" type="button" data-action="game-restart">Restart Shift</button>
         </div>
 
         <div class="quiz-card drink-game-card">
@@ -2308,10 +2583,6 @@ function renderDrinkGame(mode) {
           <button class="action-btn game-serve-btn" type="button" data-action="game-serve-drink">
             🥂 SERVE DRINK TO GUEST
           </button>
-        </div>
-
-        <div class="quiz-actions">
-          <button class="action-btn" type="button" data-action="game-restart">Restart Shift</button>
         </div>
       </section>
     `;

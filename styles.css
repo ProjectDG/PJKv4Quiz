@@ -136,6 +136,19 @@ html[data-theme="original"] .menu-btn span {
   padding: 24px 20px 40px;
 }
 
+.container:has(.drink-game-view) {
+  height: calc(100vh - 140px);
+  min-height: 0;
+  overflow: hidden;
+  padding: 10px 8px 8px;
+}
+
+@supports (height: 100dvh) {
+  .container:has(.drink-game-view) {
+    height: calc(100dvh - 140px);
+  }
+}
+
 img {
   max-width: 100%;
   display: block;
@@ -164,7 +177,24 @@ select {
 }
 
 .quiz-view.drink-game-view {
-  width: min(1400px, 98%);
+  width: min(1760px, 99.5%);
+  height: 100%;
+  min-height: 0;
+  gap: 10px;
+}
+
+.quiz-view.drink-game-view .quiz-header {
+  flex: 0 0 auto;
+}
+
+.quiz-view.drink-game-view .quiz-card.drink-game-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.quiz-view.drink-game-view .quiz-actions {
+  flex: 0 0 auto;
 }
 
 .mode-menu h2,
@@ -1036,6 +1066,62 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   }
 }
 
+/* Drink Game Build Stage: vessel summary left, ticket/status/station right */
+.drink-game-card.game-build-stage {
+  display: grid;
+  grid-template-columns: minmax(190px, 240px) 1fr;
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    "side ticket"
+    "side error"
+    "side station";
+  gap: 10px 16px;
+  height: 100%;
+  min-height: 0;
+  padding: 16px;
+}
+
+.drink-game-card.game-build-stage .game-side-panel {
+  grid-area: side;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
+}
+
+.drink-game-card.game-build-stage .ticket-container {
+  grid-area: ticket;
+}
+
+.drink-game-card.game-build-stage .game-error-toast {
+  grid-area: error;
+}
+
+.drink-game-card.game-build-stage .game-vessel-summary-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  margin-top: 0;
+}
+
+.drink-game-card.game-build-stage .interactive-station-container {
+  grid-area: station;
+  min-height: 0;
+  overflow-y: auto;
+  margin-top: 0;
+}
+
+.drink-game-card.game-build-stage .game-side-panel .ticket-status-bar {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.drink-game-card.game-build-stage .game-side-panel .ticket-status-bar .status-item {
+  justify-content: space-between;
+}
+
 /* Interactive Station Styles */
 .interactive-station-container {
   display: flex;
@@ -1045,17 +1131,69 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   margin-top: 8px;
 }
 
+/* Buttons below the speed rail that swap the whole station view */
+.station-view-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.station-view-btn {
+  flex: 1 1 0;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.station-view-btn.selected {
+  opacity: 1;
+  border-color: var(--mode-accent, #d35400);
+  background: rgba(211, 84, 0, 0.2);
+}
+
+/* Wine List View: placeholder categories to be filled in later */
+.wine-category-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.wine-category-area {
+  position: relative;
+  padding: 16px 10px 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid color-mix(in srgb, var(--border-color) 70%, transparent 30%);
+  border-radius: 4px;
+  min-height: 120px;
+}
+
+.wine-category-label {
+  position: absolute;
+  top: 4px;
+  left: 10px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.wine-category-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .station-prep-controls {
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .station-prep-btn {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
   padding: 10px 16px;
   background: rgba(0, 0, 0, 0.4);
   border: 2px solid var(--border-color);
@@ -1084,13 +1222,15 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 .station-grid-layout {
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  padding: 24px;
+  gap: 16px;
+  padding: 16px;
   background: rgba(15, 12, 10, 0.7);
   border: 2px solid color-mix(in srgb, var(--border-color) 80%, transparent 20%);
   border-radius: 6px;
   box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
   overflow-x: auto;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 /* Upper shelf: mixer block hugs left, side well hugs right */
@@ -1098,32 +1238,156 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 28px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
-/* Mixer Block */
-.mixer-shelf-area {
+/* Mixer Column: Bitters stacked above Mixers, hugging left */
+.mixer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: flex-end;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Top row of the mixer column: Bitters (left) + Sodas (right), side by side */
+.bitters-top-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  height: 84px;
+  overflow: visible;
+}
+
+/* Soda Shelf (right of the bitters) */
+.soda-shelf-area {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: flex-start;
-  align-self: flex-end;
+  padding-top: 16px;
+  flex: 0 0 auto;
 }
 
-.mixer-label {
-  font-size: 0.75rem;
+.soda-label {
+  position: absolute;
+  top: -6px;
+  left: 0;
+  font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   opacity: 0.6;
   text-align: left;
 }
 
-.mixer-row {
+.soda-row {
+  display: grid;
+  grid-template-columns: repeat(2, 60px);
+  gap: 12px;
+}
+
+/* Bitters Shelf (left of the sodas) */
+.bitters-shelf-area {
+  position: relative;
   display: flex;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
-  gap: 18px;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  padding-top: 16px;
+  flex: 0 0 auto;
+}
+
+.bitters-label {
+  position: absolute;
+  top: -6px;
+  left: 0;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  text-align: left;
+}
+
+/* Divider between Bitters and Sodas: height set inline to span the full bitters column */
+.mixer-top-divider {
+  width: 2px;
+  background: color-mix(in srgb, var(--border-color) 70%, transparent 30%);
+  margin: 4px 4px;
+}
+
+.bitters-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bitters-row .station-bottle-spacer {
+  width: 60px;
+  height: 44px;
+}
+
+/* 5 Spice and Bloody Mary Mix, positioned to the right of the sodas */
+.bitters-extra-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+/* Reserves the height of one bottle row/circle as blank vertical spacing */
+.station-empty-row {
+  height: 62px;
+}
+
+/* Divider between the Bitters/Sodas row and the Mixers below */
+.mixer-column-divider {
+  height: 2px;
+  width: 100%;
+  background: color-mix(in srgb, var(--border-color) 70%, transparent 30%);
+}
+
+/* Reserves the width of one bottle circle as blank horizontal spacing */
+.station-bottle-spacer {
+  display: inline-block;
+  width: 60px;
+}
+
+
+/* Mixer Block */
+.mixer-shelf-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  padding-top: 16px;
+  width: 100%;
+}
+
+.mixer-label {
+  position: absolute;
+  top: -6px;
+  left: 0;
+  width: 100%;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  text-align: center;
+}
+
+.mixer-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.mixer-row .station-bottle-circle {
+  width: 100%;
 }
 
 /* Divider between Mixers and Side Well */
@@ -1136,14 +1400,21 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 
 /* Side Well Shelf */
 .sidewell-shelf-area {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 18px;
+  padding-top: 16px;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .sidewell-label {
-  font-size: 0.75rem;
+  position: absolute;
+  top: -6px;
+  left: 0;
+  font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   opacity: 0.6;
@@ -1153,23 +1424,34 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 .sidewell-row {
   display: flex;
   justify-content: flex-end;
-  gap: 22px;
-  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.sidewell-row .station-bottle-circle,
+.sidewell-row .station-bottle-spacer {
+  flex: 0 0 auto;
+  width: calc((100% - (6 * 12px)) / 7);
 }
 
 /* Speed Rail Area */
 .speedrail-area {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 16px;
+  padding-top: 26px;
   background: rgba(0, 0, 0, 0.5);
   border-top: 3px double var(--mode-accent, #d35400);
   border-radius: 4px;
 }
 
 .rail-label {
-  font-size: 0.75rem;
+  position: absolute;
+  top: 6px;
+  left: 16px;
+  font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   opacity: 0.6;
@@ -1177,10 +1459,14 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 }
 
 .speedrail-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.speedrail-row .station-bottle-circle {
+  width: 100%;
 }
 
 /* Circular Bottle Items */
@@ -1189,7 +1475,7 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 68px;
+  width: 60px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -1204,11 +1490,11 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 .bottle-icon {
   position: relative;
   display: block;
-  width: 26px;
-  height: 44px;
+  width: 22px;
+  height: 38px;
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 32%),
-    linear-gradient(160deg, var(--primary-bright), var(--accent-color) 55%, var(--primary-color));
+    linear-gradient(160deg, var(--bottle-bright, var(--primary-bright)), var(--bottle-accent, var(--accent-color)) 55%, var(--bottle-base, var(--primary-color)));
   clip-path: polygon(40% 6%, 60% 6%, 60% 22%, 84% 36%, 84% 97%, 16% 97%, 16% 36%, 40% 22%);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
@@ -1220,7 +1506,7 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   left: 37%;
   width: 26%;
   height: 9%;
-  background: color-mix(in srgb, var(--primary-color) 60%, #000 40%);
+  background: color-mix(in srgb, var(--bottle-base, var(--primary-color)) 60%, #000 40%);
   border-radius: 1px;
 }
 
@@ -1282,6 +1568,31 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   clip-path: polygon(12% 0%, 88% 0%, 82% 100%, 18% 100%);
 }
 
+.glass-icon-wine .glass-bowl {
+  width: 26px;
+  height: 20px;
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+}
+
+.glass-icon-wine .glass-stem {
+  height: 12px;
+}
+
+.glass-icon-wine .glass-base {
+  width: 20px;
+  height: 3px;
+}
+
+.glass-icon-pint {
+  height: 34px;
+}
+
+.glass-icon-pint .glass-bowl {
+  width: 24px;
+  height: 34px;
+  clip-path: polygon(8% 0%, 92% 0%, 86% 100%, 14% 100%);
+}
+
 .glass-icon-collins .glass-bowl {
   width: 16px;
   height: 34px;
@@ -1319,19 +1630,26 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 }
 
 .circle-label {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   color: var(--text-color);
   text-align: center;
   margin-top: 4px;
-  max-width: 78px;
+  max-width: 74px;
   white-space: normal;
-  line-height: 1.15;
-  overflow-wrap: anywhere;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+  word-break: normal;
   opacity: 0.9;
 }
 
-/* Mixing Vessel Summary Panel */
+.speedrail-row .circle-label,
+.mixer-row .circle-label,
+.sidewell-row .circle-label {
+  max-width: 100%;
+}
+
+/* Mixer Summary Panel */
 .game-vessel-summary-panel {
   display: flex;
   flex-direction: column;
@@ -1341,8 +1659,8 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   border: 1px solid var(--border-color);
   border-radius: 4px;
   text-align: left;
+  width: 100%;
 }
-
 .game-vessel-summary-panel h4 {
   font-size: 0.95rem;
   font-weight: 800;
@@ -1351,16 +1669,12 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   letter-spacing: 0.05em;
 }
 
-.vessel-specs {
-  font-size: 0.85rem;
-  opacity: 0.9;
-}
-
 .vessel-ingredients-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: 120px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -1373,6 +1687,16 @@ html[data-theme="cyberpunk"] .mode-btn-header {
   background: rgba(255, 255, 255, 0.08);
   font-size: 0.88rem;
   border-radius: 3px;
+}
+
+.game-added-ingredient-row.ingredient-correct {
+  background: rgba(46, 204, 113, 0.25);
+  box-shadow: 0 0 0 1px rgba(46, 204, 113, 0.5) inset;
+}
+
+.game-added-ingredient-row.ingredient-incorrect {
+  background: rgba(210, 35, 60, 0.28);
+  box-shadow: 0 0 0 1px rgba(181, 18, 42, 0.55) inset;
 }
 
 .game-remove-ing-btn {
@@ -1392,12 +1716,13 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 }
 
 .game-mix-btn {
-  align-self: flex-end;
+  align-self: stretch;
   background: var(--mode-accent, #d35400);
   color: #fff;
   font-weight: 800;
   padding: 8px 18px;
-  margin-top: 4px;
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .game-error-toast {
@@ -1492,6 +1817,7 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 
 .game-serve-btn {
   width: 100%;
+  margin-top: 12px;
   padding: 14px;
   background: #2ecc71;
   color: #fff;
@@ -1544,8 +1870,9 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 }
 
 .ticket-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   gap: 14px;
   padding: 18px 20px;
   background: rgba(0, 0, 0, 0.2);
@@ -1556,7 +1883,8 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 
 .ticket-header-tag {
   display: inline-block;
-  align-self: flex-start;
+  grid-column: 1;
+  justify-self: start;
   padding: 4px 10px;
   background: var(--mode-accent, #d35400);
   color: #ffffff;
@@ -1568,6 +1896,9 @@ html[data-theme="cyberpunk"] .mode-btn-header {
 }
 
 .ticket-prompt {
+  grid-column: 2;
+  justify-self: center;
+  text-align: center;
   font-size: 1.1rem;
   font-weight: 700;
   line-height: 1.45;

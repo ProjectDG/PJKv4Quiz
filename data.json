@@ -237,7 +237,7 @@
           "Campari - 1 oz",
           "Lime Juice - .5 oz",
           "Corazon Blanco - 2 oz",
-          "Bloody Mary Mix - 3 oz (Pour First)"
+          "Bloody Mary Mix - 3 oz"
         ],
         "correct-answers": [
           "Vodka or Gin - 2.5 oz",
@@ -328,7 +328,7 @@
         "question": "Which ingredients come in Mary Not Martha? (Select all that apply)",
         "answers": [
           "Vodka - 2 oz",
-          "Bloody Mary Mix - 3 oz (Pour First)",
+          "Bloody Mary Mix - 3 oz",
           "Olive Brine - 1 oz",
           "Sweet Vermouth - 1 oz",
           "Lime Juice - .5 oz",
@@ -337,7 +337,7 @@
         ],
         "correct-answers": [
           "Vodka - 2 oz",
-          "Bloody Mary Mix - 3 oz (Pour First)"
+          "Bloody Mary Mix - 3 oz"
         ]
       },
       {
@@ -381,13 +381,13 @@
         "type": "multiple-choice",
         "question": "How much Bloody Mary Mix goes in Mary Not Martha?",
         "answers": [
-          "3 oz (Pour First)",
+          "3 oz",
           "2 oz",
           "1.5 oz",
           "1 oz"
         ],
         "correct-answers": [
-          "3 oz (Pour First)"
+          "3 oz"
         ]
       },
       {
@@ -1031,7 +1031,7 @@
           "High 5 IPA",
           "Heineken 0.0",
           "Sapporo",
-          "Coors Lt.",
+          "Coors Lt.", 
           "Tsingtao"
         ]
       }
@@ -1105,7 +1105,124 @@
       "Fulfill guest order tickets under pressure.",
       "Test glassware, recipes, techniques, and garnishes."
     ],
-    "items": []
+    "items": [],
+    "recipes": [
+      {
+        "name": "Call Me 'Koko'",
+        "glass": "Rocks Glass",
+        "ice": "Cubed Ice",
+        "tool": "Cocktail Shaker (Shake)",
+        "ingredients": [
+          { "name": "Rivi Gin", "oz": "1.5 oz" },
+          { "name": "Cincoro Reposado", "oz": ".5 oz" },
+          { "name": "Lychee Syrup", "oz": ".5 oz" },
+          { "name": "Lemon Juice", "oz": ".75 oz" },
+          { "name": "Pomegranate Juice", "oz": ".75 oz" }
+        ],
+        "garnishes": ["Dehydrated Lemon & Basil Sprig"]
+      },
+      {
+        "name": "Give Me Park Avenue",
+        "glass": "Rocks Glass",
+        "ice": "Large Cube",
+        "tool": "Mixing Glass (Stir)",
+        "ingredients": [
+          { "name": "Sazerac Rye", "oz": "2 oz" },
+          { "name": "Sweet Vermouth", "oz": "1 oz" },
+          { "name": "Angostura Bitters", "oz": "2 to 3 Dashes" }
+        ],
+        "garnishes": ["Cherry"]
+      },
+      {
+        "name": "Olive Your Dirty",
+        "glass": "Martini Glass",
+        "ice": "No Ice (Neat/Up)",
+        "tool": "Mixing Glass (Stir)",
+        "ingredients": [
+          { "name": "Wheatley Vodka or Rivi Gin", "oz": "2.5 oz" },
+          { "name": "Dry Vermouth", "oz": ".5 oz" },
+          { "name": "Olive Brine", "oz": "1 oz" }
+        ],
+        "garnishes": ["1 to 3 Olives"]
+      },
+      {
+        "name": "Mary Not Martha",
+        "glass": "Martini Glass",
+        "ice": "No Ice (Neat/Up)",
+        "tool": "Cocktail Shaker (Shake)",
+        "ingredients": [
+          { "name": "Wheatley Vodka", "oz": "2 oz" },
+          { "name": "Bloody Mary Mix", "oz": "3 oz" }
+        ],
+        "garnishes": ["Olive", "Chili", "Pickled Carrot"]
+      },
+      {
+        "name": "Negroni",
+        "glass": "Rocks Glass",
+        "ice": "Large Cube",
+        "tool": "Mixing Glass (Stir)",
+        "ingredients": [
+          { "name": "Rivi Gin", "oz": "1 oz" },
+          { "name": "Campari", "oz": "1 oz" },
+          { "name": "Sweet Vermouth", "oz": "1 oz" }
+        ],
+        "garnishes": ["Orange Twist"]
+      },
+      {
+        "name": "Pink Horizon",
+        "glass": "Collins Glass",
+        "ice": "Cubed Ice",
+        "tool": "Build in Glass",
+        "ingredients": [
+          { "name": "Corazon Tequila", "oz": "2 oz" },
+          { "name": "Lime Juice", "oz": ".5 oz" },
+          { "name": "Q Grapefruit Soda", "oz": "2 oz" }
+        ],
+        "garnishes": ["Grapefruit Slice"]
+      },
+      {
+        "name": "Spicy T & M",
+        "glass": "Rocks Glass",
+        "ice": "Cubed Ice",
+        "tool": "Cocktail Shaker (Shake)",
+        "ingredients": [
+          { "name": "Corazon Tequila (Spicy)", "oz": "1.5 oz" },
+          { "name": "Gran Gala", "oz": ".5 oz" },
+          { "name": "Blue Simple Syrup", "oz": ".5 oz" },
+          { "name": "Lime Juice", "oz": "1 oz" },
+          { "name": "Pineapple Juice", "oz": ".5 oz" }
+        ],
+        "garnishes": ["Pineapple Frond", "Dehydrated Lime", "Jalapeno Slice"]
+      },
+      {
+        "name": "Sunset Sangria",
+        "glass": "Wine Glass",
+        "ice": "Cubed Ice",
+        "tool": "Cocktail Shaker (Shake)",
+        "ingredients": [
+          { "name": "Pinot Noir or Pinot Grigio", "oz": "2 oz" },
+          { "name": "Captain Morgan", "oz": ".5 oz" },
+          { "name": "Gran Gala", "oz": ".5 oz" },
+          { "name": "5 Spice", "oz": ".25 oz" },
+          { "name": "Pineapple Juice", "oz": "2 oz" }
+        ],
+        "garnishes": ["Pineapple Frond", "2 Cherries", "3 Orange Slices"]
+      },
+      {
+        "name": "Crouching Tiger",
+        "glass": "Pint Glass",
+        "ice": "Cubed Ice",
+        "tool": "Mixing Glass (Stir)",
+        "ingredients": [
+          { "name": "Lime Juice", "oz": "1 oz" },
+          { "name": "Matcha Syrup", "oz": "1 oz" },
+          { "name": "Pineapple Juice", "oz": ".25 oz" },
+          { "name": "Shiso Leaf", "oz": "1" },
+          { "name": "Soda Water", "oz": "Topped" }
+        ],
+        "garnishes": ["Flower"]
+      }
+    ]
   },
   {
     "id": "qnaresponses",
